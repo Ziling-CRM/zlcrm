@@ -1,0 +1,16 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="zlcrm_bs:war exploded">
+    <output-path>$PROJECT_DIR$/target/zlcrm_bs</output-path>
+    <root id="root">
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="zlcrm_bs" />
+        </element>
+      </element>
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/target/zlcrm_bs/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="javaee-facet-resources" facet="zlcrm_bs/web/Web" />
+    </root>
+  </artifact>
+</component>
