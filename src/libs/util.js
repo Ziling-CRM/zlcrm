@@ -12,10 +12,10 @@ util.title = function (title) {
 };
 
 const ajaxUrl = env === 'development'
-    ? 'http://127.0.0.1:8888'
-    : env === 'production'
-        ? 'https://www.url.com'
-        : 'https://debug.url.com';
+    ? 'http://zling.net:8080/apiv1' : ''
+    // : env === 'production'
+        // ? 'https://www.url.com'
+        // : 'https://debug.url.com';
 
 util.ajax = axios.create({
     baseURL: ajaxUrl,
