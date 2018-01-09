@@ -17,9 +17,7 @@ const client = function (options) {
     })
 }
 
-const apiFactory = {
-
-}
+const apiFactory = {}
 
 export default (requestName, params = {}, data = {}) => client({
     url: apiFactory[requestName].url,
