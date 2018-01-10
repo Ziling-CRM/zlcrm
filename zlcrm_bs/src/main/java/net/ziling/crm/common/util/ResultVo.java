@@ -1,4 +1,4 @@
-package net.ziling.common.util;
+package net.ziling.crm.common.util;
 
 /**
  * Description:
@@ -9,16 +9,16 @@ package net.ziling.common.util;
  */
 public class ResultVo {
 
-    private Integer status_code;
-    private String msg;
+    public Integer code;
+    public String msg;
     private Object data;
 
     public Integer getStatus_code() {
-        return status_code;
+        return code;
     }
 
-    public void setStatus_code(Integer status_code) {
-        this.status_code = status_code;
+    public void setStatus_code(Integer code) {
+        this.code = code;
     }
 
     public Object getData() {

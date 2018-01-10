@@ -1,4 +1,4 @@
-package net.ziling.common.cors;
+package net.ziling.crm.common.cors;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -13,6 +13,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  */
 @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         //使用spring boot的时候使用
@@ -23,8 +24,11 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 //                .exposedHeaders("header1", "header2")
 //                .allowCredentials(false).maxAge(3600);
 
-        registry.addMapping("/**")
-                .allowedOrigins("*")
-                .allowedMethods("GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "TRACE");
+//        registry.addMapping("/**")
+//                .allowedOrigins("*")
+//                .allowedMethods("GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "TRACE")
+//                .allowedHeaders("Access-Control-Allow-Origin","*")
+//                .allowedHeaders("Access-Control-Allow-Methods","*")
+//                .allowedHeaders("Access-Control-Allow-Headers","Access-Control");
     }
 }

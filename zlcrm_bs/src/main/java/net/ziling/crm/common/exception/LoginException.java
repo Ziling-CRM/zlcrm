@@ -1,4 +1,4 @@
-package net.ziling.common.exception;
+package net.ziling.crm.common.exception;
 
 /**
  * Description:

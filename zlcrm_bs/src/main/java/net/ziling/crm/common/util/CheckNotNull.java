@@ -1,4 +1,4 @@
-package net.ziling.common.util;
+package net.ziling.crm.common.util;
 
 /**
  * Description:

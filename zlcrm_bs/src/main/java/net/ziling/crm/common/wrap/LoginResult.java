@@ -1,4 +1,4 @@
-package net.ziling.common.wrap;
+package net.ziling.crm.common.wrap;
 
 /**
  * Description:
@@ -10,8 +10,9 @@ package net.ziling.common.wrap;
 public enum LoginResult {
 
     SUCCESS(0, "登录成功"),
-    USERNAMEORPASSWORD_ERROR(1, "用户名或密码错误"),
-    USER_LOCKED(2, "用户被锁定");
+    USER_NOT_EXIST(1, "找不到该用户"),
+    PASSWORD_ERROR(2, "密码错误"),
+    USER_LOCKED(3, "用户被锁定");
 
     private int value;
     private String msg;
