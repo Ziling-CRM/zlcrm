@@ -7,8 +7,10 @@ import net.ziling.crm.common.util.UUIDTools;
 import net.ziling.crm.common.wrap.AddResult;
 import net.ziling.crm.common.wrap.LoginResult;
 import net.ziling.crm.common.wrap.UserPermision;
+import net.ziling.crm.dao.BaseUserMapper;
 import net.ziling.crm.entity.BaseUser;
 import net.ziling.crm.entity.Role;
+import net.ziling.crm.entity.wrap.BaseUserWrap;
 import net.ziling.crm.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -66,14 +69,6 @@ public class UserController {
         Role role = userService.getUserRole(user.getUserId());
         resultVo.setAdminDatas("permission", role.getRoleId());
 
-        List<BaseUser> adminLists;
-        //如果是超级管理员，获取所有的一般管理员信息
-        if (role.getRoleId().equals(UserPermision.SADMIN.getValue())) {
-            adminLists = userService.getAllAdmin();
-            resultVo.setAdminDatas("adminLists", adminLists);
-        }
-
-        //设置登录状态信息
         session.setAttribute("user", user);
 
         //登录成功之后的封装的参数
@@ -89,7 +84,7 @@ public class UserController {
     @ResponseBody
     public ResultVo addAdmin(String userId, String username, String password, String permission, HttpSession session, HttpServletRequest request) {
         ResultVo resultVo = new ResultVo();
-        BaseUser user = null;
+        BaseUser user ;
 
         //验证登录参数不能为空
         if (!ArgumentsValidator.checkUsernameAndPasswordNotNull(username, password)) {
@@ -106,8 +101,19 @@ public class UserController {
         }
 
         if (userId == null) {
-            userId = PRE_STR_OF_USERID + UUIDTools.getUUIDByTime_M();
+            userId = UUIDTools.getUUIDByTime_M();
         }
+
+        try {
+            Integer.parseInt(userId);
+        }catch (Exception e) {
+            e.printStackTrace();
+            resultVo.setStatus_code(AddResult.USERID_NOT_NUMBER.getValue());
+            resultVo.setMsg(AddResult.USERID_NOT_NUMBER.getMsg());
+            return resultVo;
+        }
+
+        userId = PRE_STR_OF_USERID + userId;
 
         //添加管理员用户信息
         user = new BaseUser(userId, username, password);
@@ -186,10 +192,34 @@ public class UserController {
             return resultVo;
         }
 
+        List<BaseUserWrap> adminListsWrap = new ArrayList<>();
         List<BaseUser> adminLists;
         //如果是超级管理员，获取所有的一般管理员信息
         adminLists = userService.getAllAdmin();
-        resultVo.setAdminDatas("adminLists", adminLists);
+        BaseUserWrap baseUserWrap = new BaseUserWrap();
+        Role adminRole;
+        //获取每个管理员信息的权限
+        for (BaseUser baseUser : adminLists) {
+            System.out.println(baseUser);
+            baseUserWrap.setUserId(baseUser.getUserId());
+            baseUserWrap.setPassword(baseUser.getPassword());
+            baseUserWrap.setStatus(baseUser.getStatus());
+            baseUserWrap.setUsername(baseUser.getUsername());
+            baseUserWrap.setAddress(baseUser.getAddress());
+            baseUserWrap.setEmail(baseUser.getEmail());
+            baseUserWrap.setRealname(baseUser.getRealname());
+            baseUserWrap.setTelephone(baseUser.getTelephone());
+
+            adminRole = userService.getUserRole(baseUser.getUserId());
+
+            baseUserWrap.setPermission(adminRole.getRoleId());
+
+            System.out.println("baseUserWrap:"+baseUserWrap);
+            adminListsWrap.add(baseUserWrap);
+            baseUserWrap = new BaseUserWrap();
+        }
+
+        resultVo.setAdminDatas("adminLists", adminListsWrap);
         resultVo.setCode(AddResult.SUCCESS.getValue());
         resultVo.setMsg(AddResult.SUCCESS.getMsg());
 
