@@ -213,7 +213,7 @@ public class UserController {
         //参数完整性
         if(userId == null || username == null || password == null || permission == null){
             resultVo.setCode(1);
-            resultVo.setMsg("Parameters wrong.");
+            resultVo.setMsg("缺失必要参数");
             return resultVo;
         }
 
@@ -223,13 +223,13 @@ public class UserController {
             permissionI = Integer.valueOf(permission);
         }catch(Exception e){
             resultVo.setCode(2);
-            resultVo.setMsg("Parameters wrong.");
+            resultVo.setMsg("非法的权限设置，必须为整数");
             return resultVo;
         }
         //permission check
         if(permissionI > 3 || permissionI < 0){
             resultVo.setCode(3);
-            resultVo.setMsg("Parameters wrong.");
+            resultVo.setMsg("非法的权限设置，超出范围");
             return resultVo;
         }
 
@@ -243,12 +243,19 @@ public class UserController {
 
         if(successNum > 0){
             resultVo.setCode(0);
+            resultVo.setMsg("修改成功");
             resultVo.setAdminDatas("username",username);
             resultVo.setAdminDatas("password",password);
             resultVo.setAdminDatas("permission", permission);
-        }else{
+        }else if(successNum == -1){
             resultVo.setCode(4);
-            resultVo.setMsg("Failed.");
+            resultVo.setMsg("角色用户关联不存在");
+        }else if(successNum == 0){
+            resultVo.setCode(5);
+            resultVo.setMsg("用户不存在");
+        }else{
+            resultVo.setCode(6);
+            resultVo.setMsg("未知错误");
         }
         return resultVo;
     }
@@ -265,10 +272,10 @@ public class UserController {
         int successNum = userService.deleteByUserId(userId);
         if(successNum == 0){
             resultVo.setCode(1);
-            resultVo.setAdminDatas("Message ","Failed.");
+            resultVo.setMsg("用户不存在");
         }else{
             resultVo.setCode(0);
-            resultVo.setAdminDatas("Message","Success.");
+            resultVo.setMsg("删除成功");
         }
         return resultVo;
     }

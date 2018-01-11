@@ -107,14 +107,18 @@ public class UserServiceImpl implements UserService {
     @Override
     public int updateByUserId(BaseUser user, String permission){
         int res = baseUserMapper.updateUserByUserIdSimple(user);
+        System.out.println(res);
         if(res == 0) {
             return res;
         }
 
         res = userRoleMapper.updateUserRoleByUserId(user.getUserId(), permission);
         System.out.println(res);
-
-        return res;
+        if(res == 0) {
+            return -1;
+        }else{
+            return res;
+        }
     }
 
     @Override
