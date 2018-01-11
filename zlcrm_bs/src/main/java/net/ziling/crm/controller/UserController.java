@@ -93,4 +93,80 @@ public class UserController {
         return null;
     }
 
+    /**
+     * 管理员信息修改
+     * @author wzy
+     */
+    @RequestMapping("/updateAdmin")
+    @ResponseBody
+    public AdminResultVo updateAdmin(String userId, String userName, String password, String permission,
+                                     HttpSession session, HttpServletRequest request) {
+        AdminResultVo resultVo = new AdminResultVo();
+        BaseUser user = null;
+        int permissionI = 0;
+
+        //Todo:用户状态与权限判断
+
+        //参数完整性
+        if(userId == null || userName == null || password == null || permission == null){
+            resultVo.setCode(1);
+            resultVo.setMsg("Parameters wrong.");
+            return resultVo;
+        }
+
+        //Todo:字符转义?
+        //permission整数
+        try{
+            permissionI = Integer.valueOf(permission);
+        }catch(Exception e){
+            resultVo.setCode(2);
+            resultVo.setMsg("Parameters wrong.");
+            return resultVo;
+        }
+        //permission check
+        if(permissionI > 3 || permissionI < 0){
+            resultVo.setCode(3);
+            resultVo.setMsg("Parameters wrong.");
+            return resultVo;
+        }
+
+        //按管理员Id更新管理员的userName,password,permission
+        user = new BaseUser();
+        user.setUserId(userId);
+        user.setPassword(password);
+        user.setUsername(userName);
+
+        int successNum = userService.updateByUserId(user, permission);
+
+        if(successNum > 0){
+            resultVo.setCode(0);
+            resultVo.setAdminDatas("username",userName);
+            resultVo.setAdminDatas("password",password);
+            resultVo.setAdminDatas("permission", permission);
+        }else{
+            resultVo.setCode(4);
+            resultVo.setMsg("Failed.");
+        }
+        return resultVo;
+    }
+
+    /**
+     * 管理员信息修改
+     * @author wzy
+     */
+    @RequestMapping("/deleteAdmin")
+    @ResponseBody
+    public AdminResultVo deleteAdmin(String userId, HttpSession session, HttpServletRequest request){
+        //Todo:用户状态与权限判断
+        AdminResultVo resultVo = new AdminResultVo();
+        int successNum = userService.deleteByUserId(userId);
+        if(successNum == 0){
+            resultVo.setCode(1);
+            resultVo.setAdminDatas("Message ","Failed.");
+        }else{
+            resultVo.setCode(0);
+            resultVo.setAdminDatas("Message","Success.");
+        }
+        return resultVo;
+    }
 }

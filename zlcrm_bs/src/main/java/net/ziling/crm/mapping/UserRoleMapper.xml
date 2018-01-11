@@ -113,4 +113,14 @@
     from user_role
     where user_id = #{userId,jdbcType=VARCHAR}
   </select>
+
+
+    <update id ="updateUserRoleByUserId">
+        <!--
+          @author wzy
+        -->
+        update user_role
+        set role_id = #{roleId,jdbcType=VARCHAR}
+        where user_id = #{userId,jdbcType=VARCHAR}
+    </update>
 </mapper>

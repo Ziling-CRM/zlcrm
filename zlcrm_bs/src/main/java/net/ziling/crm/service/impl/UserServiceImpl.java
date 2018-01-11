@@ -8,6 +8,7 @@ import net.ziling.crm.entity.Domain;
 import net.ziling.crm.entity.Role;
 import net.ziling.crm.entity.UserRole;
 import net.ziling.crm.service.UserService;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -65,4 +66,19 @@ public class UserServiceImpl implements UserService {
         return  baseUserMapper.getAllAdmin();
     }
 
+    @Override
+    public int updateByUserId(BaseUser user, String permission){
+        int res = baseUserMapper.updateUserByUserIdSimple(user);
+        if(res == 0) return res;
+
+        res = userRoleMapper.updateUserRoleByUserId(user.getUserId(), permission);
+        System.out.println(res);
+
+        return res;
+    }
+
+    @Override
+    public int deleteByUserId(String userId){
+        return baseUserMapper.deleteByUserId(userId);
+    }
 }
