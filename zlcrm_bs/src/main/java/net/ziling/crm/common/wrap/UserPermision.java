@@ -17,6 +17,7 @@ public enum UserPermision {
 
     private String value;
     private String msg;
+    public String[] permissions = {"*", "0", "1", "2", "3"};
 
     private UserPermision(String value, String msg) {
         this.value = value;
@@ -29,5 +30,13 @@ public enum UserPermision {
 
     public String getMsg() {
         return msg;
+    }
+
+    public String[] getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(String[] permissions) {
+        this.permissions = permissions;
     }
 }

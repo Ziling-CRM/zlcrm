@@ -36,4 +36,18 @@ public interface UserService {
      */
     public List<BaseUser> getAllAdmin();
 
+    /**
+     * 根据用户的用户名获取用户的信息
+     * @param username
+     * @return
+     */
+    public BaseUser getUserByUsername(String username);
+
+    /**
+     * 添加管理员用户
+     * @param user
+     * @return
+     */
+    public int addAdminUserAndRole(BaseUser user, Role role);
+
 }

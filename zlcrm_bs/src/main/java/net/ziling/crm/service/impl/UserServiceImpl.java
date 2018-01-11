@@ -1,10 +1,11 @@
 package net.ziling.crm.service.impl;
 
+import net.ziling.crm.common.util.UUIDTools;
+import net.ziling.crm.common.wrap.UserStatus;
 import net.ziling.crm.dao.BaseUserMapper;
 import net.ziling.crm.dao.RoleMapper;
 import net.ziling.crm.dao.UserRoleMapper;
 import net.ziling.crm.entity.BaseUser;
-import net.ziling.crm.entity.Domain;
 import net.ziling.crm.entity.Role;
 import net.ziling.crm.entity.UserRole;
 import net.ziling.crm.service.UserService;
@@ -63,6 +64,43 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<BaseUser> getAllAdmin() {
         return  baseUserMapper.getAllAdmin();
+    }
+
+    @Override
+    public BaseUser getUserByUsername(String username) {
+        if (username == null || username.trim().length()<=0) {
+            return null;
+        }
+        return baseUserMapper.selectByUsername(username);
+    }
+
+    @Override
+    public int addAdminUserAndRole(BaseUser user, Role role) {
+        if (user == null) {
+            return -1;
+        }
+        try {
+            user.setStatus(UserStatus.ON.toString());
+            baseUserMapper.insertSelective(user);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return -1;
+        }
+
+        if (role == null) {
+            return -2;
+        }
+        try {
+            UserRole userRole = new UserRole();
+            userRole.setId(UUIDTools.getUUIDId());
+            userRole.setRoleId(role.getRoleId());
+            userRole.setUserId(user.getUserId());
+            userRoleMapper.insertSelective(userRole);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return -2;
+        }
+        return 0;
     }
 
 }

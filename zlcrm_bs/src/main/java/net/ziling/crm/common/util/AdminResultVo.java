@@ -1,10 +1,6 @@
 package net.ziling.crm.common.util;
 
-import net.ziling.crm.entity.BaseUser;
-
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,17 +14,15 @@ public class AdminResultVo {
 
     public Integer code;
     public String msg;
-    public Map<String, Object> datas;
+    public Map<String, Object> data;
 
     public AdminResultVo(){
-        datas = new HashMap<>();
+        data = new HashMap<>();
     }
-
 
     public void setAdminDatas(String dataName, Object data) {
-        datas.put(dataName, data);
+        this.data.put(dataName, data);
     }
-
 
     public Integer getCode() {
         return code;

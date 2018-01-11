@@ -1,5 +1,7 @@
 package net.ziling.crm.common.util;
 
+import net.ziling.crm.common.wrap.UserPermision;
+
 /**
  * Description:
  * 检查字段不为空
@@ -7,7 +9,7 @@ package net.ziling.crm.common.util;
  * @author huaxin
  * @create 2018/01/09 16:45
  */
-public class CheckNotNull {
+public class ArgumentsValidator {
 
     /**
      * 用来检测用户和密码不能为空
@@ -21,4 +23,10 @@ public class CheckNotNull {
         }
         return false;
     }
+
+    public static boolean checkPermissionExist(String permimission) {
+        return true;
+    }
+
+
 }
