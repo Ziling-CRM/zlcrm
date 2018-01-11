@@ -117,3 +117,6 @@ console-v2/
 
 # Visual Studio Code project settings
 .vscode
+/zlcrm_bs/.idea
+/zlcrm_bs/target
+zlcrm_bs/zlcrm_bs.iml

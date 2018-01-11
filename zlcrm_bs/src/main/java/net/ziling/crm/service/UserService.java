@@ -1,5 +1,6 @@
 package net.ziling.crm.service;
 
+import com.sun.xml.internal.rngom.parse.host.Base;
 import net.ziling.crm.entity.BaseUser;
 import net.ziling.crm.entity.Domain;
 import net.ziling.crm.entity.Role;
@@ -49,5 +50,19 @@ public interface UserService {
      * @return
      */
     public int addAdminUserAndRole(BaseUser user, Role role);
+
+    /**
+     * 根据userId更新用户信息
+     * @param user,permission
+     * @return success number 0 / 1
+     */
+    public int updateByUserId(BaseUser user, String permission);
+
+    /**
+     * 根据userId删除所有user
+     * @param baseUserId
+     * @return success number 0 / 1
+     */
+    public int deleteByUserId(String baseUserId);
 
 }

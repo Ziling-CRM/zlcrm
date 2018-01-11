@@ -65,4 +65,18 @@ public interface BaseUserMapper {
      * @return
      */
     List<BaseUser> getAllAdmin();
+
+    /**
+     * Simple版本修改用户信息
+     * @param record
+     * @return
+     */
+    int updateUserByUserIdSimple(BaseUser record);
+
+    /**
+     * 根据用户Id删除用户
+     * @param userId
+     * @return
+     */
+    int deleteByUserId(String userId);
 }

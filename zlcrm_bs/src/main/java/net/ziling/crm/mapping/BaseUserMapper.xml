@@ -176,4 +176,17 @@
     where u.user_id = r.user_id
   </select>
 
+  <update id="updateUserByUserIdSimple" parameterType="net.ziling.crm.entity.BaseUser" >
+    update base_user
+    set username = #{username,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR}
+    where user_id = #{userId,jdbcType=VARCHAR}
+  </update>
+
+  <update id="deleteByUserId" parameterType="java.lang.String">
+    update base_user
+    set status = "OFF"
+    where user_id = #{userId, jdbcType=VARCHAR}
+  </update>
+
 </mapper>

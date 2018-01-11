@@ -2,6 +2,7 @@ package net.ziling.crm.dao;
 
 import net.ziling.crm.entity.Role;
 import net.ziling.crm.entity.UserRole;
+import org.apache.ibatis.annotations.Param;
 
 public interface UserRoleMapper {
     /**
@@ -59,4 +60,11 @@ public interface UserRoleMapper {
      */
     UserRole getUserRoleByUserId(String userId);
 
+    /**
+     * 根据UserId修改用户的角色信息
+     * @param userId
+     * @param roleId
+     * @return
+     */
+    int updateUserRoleByUserId(@Param("userId") String userId, @Param("roleId") String roleId);
 }
