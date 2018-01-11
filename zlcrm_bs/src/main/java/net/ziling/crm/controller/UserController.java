@@ -139,6 +139,7 @@ public class UserController {
             return  resultVo;
         }
 
+        //这个地方的带有状态筛选，OFF为用户被删除状态， ON为用户正常在线的状态
         adminUser = userService.getUserByUsername(username);
 
         //如果没有找到该管理员用户的话
@@ -201,7 +202,7 @@ public class UserController {
      */
     @RequestMapping("/updateAdmin")
     @ResponseBody
-    public AdminResultVo updateAdmin(String userId, String userName, String password, String permission,
+    public AdminResultVo updateAdmin(String userId, String username, String password, String permission,
                                      HttpSession session, HttpServletRequest request) {
         AdminResultVo resultVo = new AdminResultVo();
         BaseUser user = null;
@@ -210,7 +211,7 @@ public class UserController {
         //Todo:用户状态与权限判断
 
         //参数完整性
-        if(userId == null || userName == null || password == null || permission == null){
+        if(userId == null || username == null || password == null || permission == null){
             resultVo.setCode(1);
             resultVo.setMsg("Parameters wrong.");
             return resultVo;
@@ -236,13 +237,13 @@ public class UserController {
         user = new BaseUser();
         user.setUserId(userId);
         user.setPassword(password);
-        user.setUsername(userName);
+        user.setUsername(username);
 
         int successNum = userService.updateByUserId(user, permission);
 
         if(successNum > 0){
             resultVo.setCode(0);
-            resultVo.setAdminDatas("username",userName);
+            resultVo.setAdminDatas("username",username);
             resultVo.setAdminDatas("password",password);
             resultVo.setAdminDatas("permission", permission);
         }else{
@@ -253,7 +254,7 @@ public class UserController {
     }
 
     /**
-     * 管理员信息修改
+     * 管理员信息删除
      * @author wzy
      */
     @RequestMapping("/deleteAdmin")
@@ -271,5 +272,4 @@ public class UserController {
         }
         return resultVo;
     }
-
 }

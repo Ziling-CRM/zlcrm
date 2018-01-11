@@ -165,7 +165,7 @@
     select
     <include refid="Base_Column_List" />
     from base_user
-    where username = #{username,jdbcType=VARCHAR}
+    where username = #{username,jdbcType=VARCHAR} AND status = "ON"
   </select>
 
   <select id="getAllAdmin" resultMap="BaseResultMap" parameterType="java.lang.String" >
@@ -173,7 +173,7 @@
     <!--<include refid="Base_Column_List" />-->
     u.*
     from base_user u, user_role r
-    where u.user_id = r.user_id
+    where u.user_id = r.user_id AND u.status = "ON"
   </select>
 
   <update id="updateUserByUserIdSimple" parameterType="net.ziling.crm.entity.BaseUser" >
