@@ -21,4 +21,10 @@ public class BaseUserWrap extends BaseUser {
         this.permission = permission;
     }
 
+
+    public String printLog() {
+        return "BaseUserWrap{" +super.toString()+
+                "permission='" + permission + '\'' +
+                '}';
+    }
 }

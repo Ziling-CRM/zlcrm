@@ -84,7 +84,7 @@ public class UserController {
     @ResponseBody
     public ResultVo addAdmin(String userId, String username, String password, String permission, HttpSession session, HttpServletRequest request) {
         ResultVo resultVo = new ResultVo();
-        BaseUser user = null;
+        BaseUser user ;
 
         //验证登录参数不能为空
         if (!ArgumentsValidator.checkUsernameAndPasswordNotNull(username, password)) {
@@ -101,8 +101,19 @@ public class UserController {
         }
 
         if (userId == null) {
-            userId = PRE_STR_OF_USERID + UUIDTools.getUUIDByTime_M();
+            userId = UUIDTools.getUUIDByTime_M();
         }
+
+        try {
+            Integer.parseInt(userId);
+        }catch (Exception e) {
+            e.printStackTrace();
+            resultVo.setStatus_code(AddResult.USERID_NOT_NUMBER.getValue());
+            resultVo.setMsg(AddResult.USERID_NOT_NUMBER.getMsg());
+            return resultVo;
+        }
+
+        userId = PRE_STR_OF_USERID + userId;
 
         //添加管理员用户信息
         user = new BaseUser(userId, username, password);
@@ -189,6 +200,7 @@ public class UserController {
         Role adminRole;
         //获取每个管理员信息的权限
         for (BaseUser baseUser : adminLists) {
+            System.out.println(baseUser);
             baseUserWrap.setUserId(baseUser.getUserId());
             baseUserWrap.setPassword(baseUser.getPassword());
             baseUserWrap.setStatus(baseUser.getStatus());
@@ -198,11 +210,13 @@ public class UserController {
             baseUserWrap.setRealname(baseUser.getRealname());
             baseUserWrap.setTelephone(baseUser.getTelephone());
 
-            adminRole = userService.getUserRole(baseUserWrap.getUserId());
+            adminRole = userService.getUserRole(baseUser.getUserId());
 
             baseUserWrap.setPermission(adminRole.getRoleId());
 
+            System.out.println("baseUserWrap:"+baseUserWrap);
             adminListsWrap.add(baseUserWrap);
+            baseUserWrap = new BaseUserWrap();
         }
 
         resultVo.setAdminDatas("adminLists", adminListsWrap);
