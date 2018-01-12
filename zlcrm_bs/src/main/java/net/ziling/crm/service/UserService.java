@@ -65,4 +65,19 @@ public interface UserService {
      */
     public int deleteByUserId(String baseUserId);
 
+    /**
+     * 根据用户的userId获取用户的信息
+     * @param userId
+     * @return
+     */
+    public BaseUser getUserByUserId(String userId);
+
+    /**
+     * 添加客户信息
+     * @param baseUser
+     * @return
+     */
+    public int addBaseUser(BaseUser baseUser) throws Exception;
+
+
 }

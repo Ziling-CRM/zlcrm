@@ -11,7 +11,7 @@ public enum AddResult {
 
     SUCCESS(0, "操作成功"),
     FIELD_NULL(1, "存在非法空字段"),
-    DOUBLE_USERNAME(2, "用户名重复了"),
+    DOUBLE_USERNAME(2, "用户重复了"),
     FAILED_IN_INSERT(3, "插入数据到数据库出错"),
     NOT_PERMISSION(4, "没有权限"),
     USERID_NOT_NUMBER(5, "工号userId只能是数字");

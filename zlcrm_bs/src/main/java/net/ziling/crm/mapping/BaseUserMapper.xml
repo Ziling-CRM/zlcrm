@@ -233,7 +233,7 @@
     <!--<include refid="Base_Column_List" />-->
     u.*
     from base_user u, user_role r
-    where u.user_id = r.user_id AND u.status = "ON"
+    where u.user_id = r.user_id AND u.status = "ON" AND r.role_id != '*'
   </select>
 
   <update id="updateUserByUserIdSimple" parameterType="net.ziling.crm.entity.BaseUser">

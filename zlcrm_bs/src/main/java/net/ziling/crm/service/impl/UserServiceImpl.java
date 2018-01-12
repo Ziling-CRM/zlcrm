@@ -125,4 +125,23 @@ public class UserServiceImpl implements UserService {
     public int deleteByUserId(String userId){
         return baseUserMapper.deleteByUserId(userId);
     }
+
+    @Override
+    public BaseUser getUserByUserId(String userId) {
+        if (userId == null || userId.trim().length()<=0) {
+            return null;
+        }
+        return baseUserMapper.selectByPrimaryKey(userId);
+    }
+
+    @Override
+    public int addBaseUser(BaseUser baseUser) throws Exception {
+        try{
+            return baseUserMapper.insertSelective(baseUser);
+        }catch (Exception e) {
+            throw  e;
+        }finally {
+            return 0;
+        }
+    }
 }
