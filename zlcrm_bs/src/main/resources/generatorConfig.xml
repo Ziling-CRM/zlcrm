@@ -85,10 +85,10 @@
 
         </javaClientGenerator>
 
-        <!-- 要生成的表 tableName是数据库中的表名或视图名 domainObjectName是实体类名-->
-        <!--<table tableName="base_user" domainObjectName="BaseUser" enableCountByExample="false"-->
-               <!--enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"-->
-               <!--selectByExampleQueryId="false"></table>-->
+         <!--要生成的表 tableName是数据库中的表名或视图名 domainObjectName是实体类名-->
+        <table tableName="base_user" domainObjectName="BaseUser" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false"></table>
 
         <!-- 要生成的表 tableName是数据库中的表名或视图名 domainObjectName是实体类名-->
         <!--<table tableName="zc_domain" domainObjectName="Domain" enableCountByExample="false"-->
@@ -109,21 +109,21 @@
                <!--enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"-->
                <!--selectByExampleQueryId="false"></table>-->
 
-        <table tableName="zc_duty" domainObjectName="Duty" enableCountByExample="false"
-        enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
-        selectByExampleQueryId="false"></table>
+        <!--<table tableName="zc_duty" domainObjectName="Duty" enableCountByExample="false"-->
+        <!--enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"-->
+        <!--selectByExampleQueryId="false"></table>-->
 
-        <table tableName="zc_project" domainObjectName="Project" enableCountByExample="false"
-               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
-               selectByExampleQueryId="false"></table>
+        <!--<table tableName="zc_project" domainObjectName="Project" enableCountByExample="false"-->
+               <!--enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"-->
+               <!--selectByExampleQueryId="false"></table>-->
 
-        <table tableName="user_pro" domainObjectName="UserProject" enableCountByExample="false"
-               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
-               selectByExampleQueryId="false"></table>
+        <!--<table tableName="user_pro" domainObjectName="UserProject" enableCountByExample="false"-->
+               <!--enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"-->
+               <!--selectByExampleQueryId="false"></table>-->
 
-        <table tableName="user_duty" domainObjectName="UserDuty" enableCountByExample="false"
-               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
-               selectByExampleQueryId="false"></table>
+        <!--<table tableName="user_duty" domainObjectName="UserDuty" enableCountByExample="false"-->
+               <!--enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"-->
+               <!--selectByExampleQueryId="false"></table>-->
 
     </context>
 </generatorConfiguration>
