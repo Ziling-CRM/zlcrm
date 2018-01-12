@@ -105,7 +105,23 @@
                <!--enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"-->
                <!--selectByExampleQueryId="false"></table>-->
 
-        <table tableName="user_role" domainObjectName="UserRole" enableCountByExample="false"
+        <!--<table tableName="user_role" domainObjectName="UserRole" enableCountByExample="false"-->
+               <!--enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"-->
+               <!--selectByExampleQueryId="false"></table>-->
+
+        <table tableName="zc_duty" domainObjectName="Duty" enableCountByExample="false"
+        enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+        selectByExampleQueryId="false"></table>
+
+        <table tableName="zc_project" domainObjectName="Project" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false"></table>
+
+        <table tableName="user_pro" domainObjectName="UserProject" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false"></table>
+
+        <table tableName="user_duty" domainObjectName="UserDuty" enableCountByExample="false"
                enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
                selectByExampleQueryId="false"></table>
 
