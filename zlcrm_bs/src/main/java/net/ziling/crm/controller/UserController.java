@@ -17,7 +17,7 @@ import javax.servlet.http.HttpSession;
  * @create 2018/01/12 15:27
  */
 @Controller
-@RequestMapping("/user")
+@RequestMapping("/admin")
 public class UserController {
 
     @RequestMapping("/addBaseUser")
