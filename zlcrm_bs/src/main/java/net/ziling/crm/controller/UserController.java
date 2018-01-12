@@ -30,7 +30,7 @@ import java.util.List;
  * @create 2018/01/08 19:54
  */
 @Controller
-@RequestMapping("/user")
+@RequestMapping("/admin")
 public class UserController {
 
     private final static String PRE_STR_OF_USERID = "a";
