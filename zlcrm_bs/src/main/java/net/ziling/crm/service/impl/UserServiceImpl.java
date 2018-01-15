@@ -197,4 +197,15 @@ public class UserServiceImpl implements UserService {
 
         return resultUser;
     }
+
+    @Override
+    public int addBaseUser(BaseUser baseUser) throws Exception {
+        try{
+            return baseUserMapper.insertSelective(baseUser);
+        }catch (Exception e) {
+            throw  e;
+        }finally {
+            return 0;
+        }
+    }
 }

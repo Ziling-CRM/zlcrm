@@ -53,7 +53,6 @@ public interface BaseUserMapper {
      */
     int updateByPrimaryKey(BaseUser record);
 
-
     /**
      * 通过用户查找用户的信息是否存在
      * @param username
