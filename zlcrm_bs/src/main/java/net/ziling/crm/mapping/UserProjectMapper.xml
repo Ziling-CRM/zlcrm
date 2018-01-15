@@ -102,4 +102,13 @@
     where user_id = #{userId,jdbcType=VARCHAR}
       and pro_id = #{proId,jdbcType=VARCHAR}
   </update>
+
+  <!--
+  wzy
+  -->
+  <select id="selectProIdByUserId" parameterType="java.lang.String" resultType="java.lang.String">
+    select pro_id
+    from user_pro
+    where user_id = #{userId, jdbcType=VARCHAR}
+  </select>
 </mapper>

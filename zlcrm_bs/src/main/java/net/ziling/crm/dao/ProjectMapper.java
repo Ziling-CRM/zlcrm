@@ -50,4 +50,11 @@ public interface ProjectMapper {
      * @mbggenerated
      */
     int updateByPrimaryKey(Project record);
+
+    /**
+     * 通过projectId查找单个project
+     * @param proId
+     * @return
+     */
+    Project selectProjectByProId(String proId);
 }

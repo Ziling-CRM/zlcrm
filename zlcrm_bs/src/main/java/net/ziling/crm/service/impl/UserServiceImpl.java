@@ -1,19 +1,17 @@
 package net.ziling.crm.service.impl;
 
 import net.ziling.crm.common.util.UUIDTools;
+import net.ziling.crm.common.wrap.GetUserResult;
 import net.ziling.crm.common.wrap.UserStatus;
-import net.ziling.crm.dao.BaseUserMapper;
-import net.ziling.crm.dao.RoleMapper;
-import net.ziling.crm.dao.UserRoleMapper;
-import net.ziling.crm.entity.BaseUser;
-import net.ziling.crm.entity.Role;
-import net.ziling.crm.entity.UserRole;
+import net.ziling.crm.dao.*;
+import net.ziling.crm.entity.*;
 import net.ziling.crm.service.UserService;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
 
 /**
  * Description:
@@ -34,6 +32,14 @@ public class UserServiceImpl implements UserService {
     private UserRoleMapper userRoleMapper;
     @Autowired
     private RoleMapper roleMapper;
+    @Autowired
+    private ProjectMapper projectMapper;
+    @Autowired
+    private DutyMapper dutyMapper;
+    @Autowired
+    private UserDutyMapper userDutyMapper;
+    @Autowired
+    private UserProjectMapper userProjectMapper;
 
     @Override
     public BaseUser loginByUsernameAndPassword(String username, String password) {
@@ -73,18 +79,18 @@ public class UserServiceImpl implements UserService {
             return null;
         }
         return baseUserMapper.selectByUsername(username);
-    }
-
-    @Override
-    public int addAdminUserAndRole(BaseUser user, Role role) {
-        if (user == null) {
-            return -1;
         }
-        try {
-            user.setStatus(UserStatus.ON.toString());
-            baseUserMapper.insertSelective(user);
-        } catch (Exception e) {
-            e.printStackTrace();
+
+                @Override
+                public int addAdminUserAndRole(BaseUser user, Role role) {
+                    if (user == null) {
+                        return -1;
+                    }
+                    try {
+                        user.setStatus(UserStatus.ON.toString());
+                        baseUserMapper.insertSelective(user);
+                    } catch (Exception e) {
+                        e.printStackTrace();
             return -1;
         }
 
@@ -124,5 +130,71 @@ public class UserServiceImpl implements UserService {
     @Override
     public int deleteByUserId(String userId){
         return baseUserMapper.deleteByUserId(userId);
+    }
+
+    @Override
+    public Map<String, Object> getUserByUserId(String userId){
+        Map<String, Object> resultUser = new HashMap<>();
+
+        //获取基本信息
+        BaseUser user = baseUserMapper.selectByUserId(userId);
+        if(user == null){
+            resultUser.put("Error", GetUserResult.USER_NOT_EXIST.getValue());
+            resultUser.put("ErrorMsg", GetUserResult.USER_NOT_EXIST.getMsg());
+            return resultUser;
+        }
+
+        //获取dutyId
+        List<String> dutyIds = userDutyMapper.selectByUserId(userId);
+        if(dutyIds.size() == 0){
+            resultUser.put("Error", GetUserResult.DUTY_NOT_EXIST.getValue());
+            resultUser.put("ErrorMsg", GetUserResult.DUTY_NOT_EXIST.getMsg());
+            return resultUser;
+        }
+
+        //获取proId
+        List<String> proIds = userProjectMapper.selectProIdByUserId(userId);
+        if(proIds.size() == 0){
+            resultUser.put("Error", GetUserResult.PROJECT_NOT_EXIST.getValue());
+            resultUser.put("ErrorMsg", GetUserResult.PROJECT_NOT_EXIST.getMsg());
+            return resultUser;
+        }
+
+        List<Duty> duties = new ArrayList<Duty>();
+        duties.clear();
+        //获取duty信息
+        for (String id:dutyIds) {
+            Duty t = dutyMapper.selectDutyByDutyId(id);
+            if(t != null) {
+                duties.add(t);
+            }else{
+                resultUser.put("Error", GetUserResult.DUTY_ID_NOT_EXIST.getValue());
+                resultUser.put("ErrorMsg", GetUserResult.DUTY_ID_NOT_EXIST.getMsg());
+                return resultUser;
+            }
+        }
+
+        List<Project> projects = new ArrayList<Project>();
+        projects.clear();
+        //获取project信息
+        for (String id:proIds){
+            Project t = projectMapper.selectProjectByProId(id);
+            if(t != null){
+                projects.add(t);
+            }else {
+                resultUser.put("Error", GetUserResult.PROJECT_ID_NOT_EXIST.getValue());
+                resultUser.put("ErrorMsg", GetUserResult.PROJECT_ID_NOT_EXIST.getMsg());
+                return resultUser;
+            }
+        }
+
+        resultUser.put("Error", GetUserResult.SUCCESS.getValue());
+        resultUser.put("ErrorMsg", GetUserResult.SUCCESS.getMsg());
+
+        resultUser.put("User", user);
+        resultUser.put("Duties", duties);
+        resultUser.put("Projects", projects);
+
+        return resultUser;
     }
 }

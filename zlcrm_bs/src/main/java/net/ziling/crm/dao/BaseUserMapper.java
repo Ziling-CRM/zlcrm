@@ -81,4 +81,10 @@ public interface BaseUserMapper {
      */
     int deleteByUserId(String userId);
 
+    /**
+     * 根据客户Id查找客户信息
+     * @param userId
+     * @return
+     */
+    BaseUser selectByUserId(String userId);
 }

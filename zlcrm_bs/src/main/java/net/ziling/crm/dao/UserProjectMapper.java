@@ -3,6 +3,8 @@ package net.ziling.crm.dao;
 import net.ziling.crm.entity.UserProject;
 import net.ziling.crm.entity.UserProjectKey;
 
+import java.util.List;
+
 /**
  * Description:
  *
@@ -59,4 +61,11 @@ public interface UserProjectMapper {
      * @mbggenerated
      */
     int updateByPrimaryKey(UserProject record);
+
+    /**
+     * 通过UserId查找ProjectId
+     * @param userId
+     * @return
+     */
+    List<String> selectProIdByUserId(String userId);
 }
