@@ -102,4 +102,14 @@
     where user_id = #{userId,jdbcType=VARCHAR}
       and duty_id = #{dutyId,jdbcType=VARCHAR}
   </update>
+
+  <!--
+  wzy
+  -->
+  <select id="selectByUserId" parameterType="java.lang.String" resultType="java.lang.String">
+    select
+    duty_id
+    from user_duty
+    where user_id = #{userId, jdbcType=VARCHAR}
+  </select>
 </mapper>

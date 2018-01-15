@@ -219,4 +219,15 @@
       month_income = #{monthIncome,jdbcType=REAL}
     where duty_id = #{dutyId,jdbcType=VARCHAR}
   </update>
+
+  <!--
+  wzy
+  -->
+  <select id="selectDutyByDutyId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from zc_duty
+    where duty_id = #{dutyId, jdbcType=VARCHAR}
+  </select>
+
 </mapper>

@@ -1,11 +1,10 @@
 package net.ziling.crm.service;
 
-import com.sun.xml.internal.rngom.parse.host.Base;
 import net.ziling.crm.entity.BaseUser;
-import net.ziling.crm.entity.Domain;
 import net.ziling.crm.entity.Role;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Description:
@@ -54,14 +53,14 @@ public interface UserService {
     /**
      * 根据userId更新用户信息
      * @param user,permission
-     * @return success number 0 / 1
+     * @return success 0 / 1
      */
     public int updateByUserId(BaseUser user, String permission);
 
     /**
      * 根据userId删除所有user
      * @param baseUserId
-     * @return success number 0 / 1
+     * @return success 0 / 1
      */
     public int deleteByUserId(String baseUserId);
 
@@ -78,6 +77,4 @@ public interface UserService {
      * @return
      */
     public int addBaseUser(BaseUser baseUser) throws Exception;
-
-
 }

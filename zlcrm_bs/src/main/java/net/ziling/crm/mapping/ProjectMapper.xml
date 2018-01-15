@@ -137,4 +137,15 @@
       project_state = #{projectState,jdbcType=VARCHAR}
     where pro_id = #{proId,jdbcType=VARCHAR}
   </update>
+
+  <!--
+  wzy
+  -->
+  <select id="selectProjectByProId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from zc_project
+    where pro_id = #{proId, jdbcType=VARCHAR}
+  </select>
+
 </mapper>

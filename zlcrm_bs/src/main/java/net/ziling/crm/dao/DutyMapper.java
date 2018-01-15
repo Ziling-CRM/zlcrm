@@ -50,4 +50,11 @@ public interface DutyMapper {
      * @mbggenerated
      */
     int updateByPrimaryKey(Duty record);
+
+    /**
+     * 通过dutyId获取到单个Duty
+     * @param dutyId
+     * @return
+     */
+    Duty selectDutyByDutyId(String dutyId);
 }
