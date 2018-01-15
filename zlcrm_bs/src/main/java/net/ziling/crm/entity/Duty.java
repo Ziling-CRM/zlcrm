@@ -119,7 +119,9 @@ public class Duty {
      *
      * @mbggenerated
      */
-    public Duty(String dutyId, String skill, String workYears, String post, String company, String capacityRate, String creditRate, String rehireRate, String checkRate, Integer checkNum, Integer proceedNum, Float userIncome, Float monthIncome) {
+    public Duty(String dutyId, String skill, String workYears, String post, String company,
+                String capacityRate, String creditRate, String rehireRate, String checkRate,
+                Integer checkNum, Integer proceedNum, Float userIncome, Float monthIncome) {
         this.dutyId = dutyId;
         this.skill = skill;
         this.workYears = workYears;

@@ -1,10 +1,10 @@
 package net.ziling.crm.controller;
 
 import net.ziling.crm.common.util.AdminResultVo;
+import net.ziling.crm.common.util.UUIDTools;
 import net.ziling.crm.common.wrap.GetUserResult;
-import net.ziling.crm.entity.BaseUser;
-import net.ziling.crm.entity.Duty;
-import net.ziling.crm.entity.Project;
+import net.ziling.crm.common.wrap.LoginResult;
+import net.ziling.crm.entity.*;
 import net.ziling.crm.service.UserService;
 import net.ziling.crm.common.util.ResultVo;
 import net.ziling.crm.common.wrap.AddResult;
@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -41,24 +42,26 @@ public class UserController {
         ResultVo resultVo = new ResultVo();
         BaseUser user = new BaseUser();
 
+        System.out.println("userId:"+userId+"  realname:" + realname);
+
+        //此处需要验证当前session中的登录状态的权限
+
+        //end
+
         //验证userId的有效性
         //1、userId不能为空
         if (userId == null || userId.trim().length() <= 0) {
-            resultVo.setStatus_code(AddResult.FIELD_NULL.getValue());
+            resultVo.setCode(AddResult.FIELD_NULL.getValue());
             resultVo.setMsg(AddResult.FIELD_NULL.getMsg()+":userId不能为空");
             return resultVo;
         }
         //2、新增加的userId即表示为工号不能在数据库中存在
         //验证用户名不能重复
-        if (userService.getUserByUserId(userId) != null) {
-            resultVo.setStatus_code(AddResult.DOUBLE_USERNAME.getValue());
+        if (userService.judgeUserExist(userId) != null) {
+            resultVo.setCode(AddResult.DOUBLE_USERNAME.getValue());
             resultVo.setMsg(AddResult.DOUBLE_USERNAME.getMsg());
             return resultVo;
         }
-
-        //此处需要验证当前session中的登录状态的权限
-
-        //end
 
         //封装用户信息
         user.setUserId(userId);
@@ -75,12 +78,208 @@ public class UserController {
             userService.addBaseUser(user);
         }catch (Exception e) {
             e.printStackTrace();
-            resultVo.setStatus_code(AddResult.FAILED_IN_INSERT.getValue());
+            resultVo.setCode(AddResult.FAILED_IN_INSERT.getValue());
             resultVo.setMsg(AddResult.FAILED_IN_INSERT.getMsg());
             return resultVo;
         }
-        resultVo.setStatus_code(AddResult.SUCCESS.getValue());
+        resultVo.setCode(AddResult.SUCCESS.getValue());
         resultVo.setMsg(AddResult.SUCCESS.getMsg());
+        return resultVo;
+    }
+
+    @RequestMapping("/addUserDuty")
+    @ResponseBody
+    public ResultVo addUserDuty(String userId, String skill, String workYears, String post,
+                                String company, String capacityRate, String creditRate, String rehireRate,
+                                String checkRate, String checkNum, String proceedNum, String userIncome,
+                                String monthIncome, HttpSession session, HttpServletRequest request) {
+        ResultVo resultVo = new ResultVo();
+        UserDuty userDuty = new UserDuty();
+        Duty duty = new Duty();
+
+        //首先进行当前管理员用户权限的检验
+        // end 管理员权限的检验
+
+        //验证userId的有效性
+        //1、userId不能为空
+        if (userId == null || userId.trim().length() <= 0) {
+            resultVo.setCode(AddResult.FIELD_NULL.getValue());
+            resultVo.setMsg(AddResult.FIELD_NULL.getMsg()+":userId不能为空");
+            return resultVo;
+        }
+        //2、新增加的userId即表示为工号不能在数据库中存在
+        //验证用户名必须先存在
+        if (userService.judgeUserExist(userId) == null) {
+            resultVo.setCode(AddResult.USER_NOT_FIND.getValue());
+            resultVo.setMsg(AddResult.USER_NOT_FIND.getMsg());
+            return resultVo;
+        }
+
+        //封装用户的职责信息
+        duty.setDutyId(UUIDTools.getUUIDByTime_M());
+        duty.setSkill(skill);
+        duty.setWorkYears(workYears);
+        duty.setPost(post);
+        duty.setCompany(company);
+        duty.setCapacityRate(capacityRate);
+        duty.setCreditRate(creditRate);
+        duty.setRehireRate(rehireRate);
+        duty.setCheckRate(checkRate);
+        //验证数字参数的正确性
+        int cn;  int pn; float ui; float mi;
+        try {
+            cn = Integer.parseInt(checkNum);
+            pn = Integer.parseInt(proceedNum);
+            ui = Float.parseFloat(userIncome);
+            mi = Float.parseFloat(monthIncome);
+        }catch (Exception e) {
+            e.printStackTrace();
+            resultVo.setCode(AddResult.FIELD_NULL.getValue());
+            resultVo.setMsg(AddResult.FIELD_NULL.getMsg()+", 只能为数字的字段中包含了非数字值");
+            return resultVo;
+        }
+        duty.setCheckNum(cn);
+        duty.setProceedNum(pn);
+        duty.setUserIncome(ui);
+        duty.setMonthIncome(mi);
+        //封装用户职责表中的数据
+        userDuty.setUserId(userId);
+        userDuty.setDutyId(duty.getDutyId());
+        // end 封装用户的职责信息
+
+        //写入数据到职责表,写入数据到用户职责表进行用户和职责的关联操作
+        switch (userService.addUserDuty(userDuty, duty)) {
+            case 0: {
+                resultVo.setCode(AddResult.SUCCESS.getValue());
+                resultVo.setMsg(AddResult.SUCCESS.getMsg());
+            }
+                break;
+            case 1: {
+                resultVo.setCode(AddResult.FAILED_IN_INSERT.getValue());
+                resultVo.setMsg(AddResult.SUCCESS.getMsg()+"，UserDuty的插入有误");
+            }
+                break;
+            case 2: {
+                resultVo.setCode(AddResult.FAILED_IN_INSERT.getValue());
+                resultVo.setMsg(AddResult.SUCCESS.getMsg()+"，Duty的插入有误");
+            }
+                break;
+            case 3: {
+                resultVo.setCode(AddResult.FIELD_NULL.getValue());
+                resultVo.setMsg(AddResult.FIELD_NULL.getMsg());
+            }
+                break;
+            default: {
+                resultVo.setCode(-1);
+                resultVo.setMsg("不明错误，非法操作");
+            }
+
+        }
+        return resultVo;
+    }
+
+    @RequestMapping("/addUserProject")
+    @ResponseBody
+    public ResultVo addUserProject(String userId, String projectName, String projectType, String projectPrice,
+                                String projectIncome, String projectState, HttpSession session, HttpServletRequest request) {
+        ResultVo resultVo = new ResultVo();
+        UserProject userProject = new UserProject();
+        Project project = new Project();
+
+        //首先进行当前管理员用户权限的检验
+        // end 管理员权限的检验
+
+        //验证userId的有效性
+        //1、userId不能为空
+        if (userId == null || userId.trim().length() <= 0) {
+            resultVo.setCode(AddResult.FIELD_NULL.getValue());
+            resultVo.setMsg(AddResult.FIELD_NULL.getMsg()+":userId不能为空");
+            return resultVo;
+        }
+        //2、新增加的userId即表示为工号不能在数据库中存在
+        //验证用户名必须先存在
+        if (userService.judgeUserExist(userId) == null) {
+            resultVo.setCode(AddResult.USER_NOT_FIND.getValue());
+            resultVo.setMsg(AddResult.USER_NOT_FIND.getMsg());
+            return resultVo;
+        }
+
+        //开始封装用户的项目信息
+        project.setProId(UUIDTools.getUUIDByTime_M());
+        project.setProjectName(projectName);
+        project.setProjectType(projectType);
+        project.setProjectPrice(projectPrice);
+        project.setProjectIncome(projectIncome);
+        project.setProjectState(projectState);
+        userProject.setUserId(userId);
+        userProject.setProId(project.getProId());
+        // end 封装用户的项目信息
+
+        //写入数据到项目表,写入数据到用户项目表进行用户和职责的关联操作
+        switch (userService.addUserProject(userProject, project)) {
+            case 0: {
+                resultVo.setCode(AddResult.SUCCESS.getValue());
+                resultVo.setMsg(AddResult.SUCCESS.getMsg());
+            }
+            break;
+            case 1: {
+                resultVo.setCode(AddResult.FAILED_IN_INSERT.getValue());
+                resultVo.setMsg(AddResult.SUCCESS.getMsg()+"，UserProject的插入有误");
+            }
+            break;
+            case 2: {
+                resultVo.setCode(AddResult.FAILED_IN_INSERT.getValue());
+                resultVo.setMsg(AddResult.SUCCESS.getMsg()+"，Project的插入有误");
+            }
+            break;
+            case 3: {
+                resultVo.setCode(AddResult.FIELD_NULL.getValue());
+                resultVo.setMsg(AddResult.FIELD_NULL.getMsg());
+            }
+            break;
+            default: {
+                resultVo.setCode(-1);
+                resultVo.setMsg("不明错误，非法操作");
+            }
+        }
+
+        return resultVo;
+    }
+
+    @RequestMapping("/listAllUser")
+    @ResponseBody
+    public ResultVo listAllUser(String userId, String duty, String username, HttpSession session, HttpServletRequest request) {
+        ResultVo resultVo = new ResultVo();
+        Map<String , String> limits = new HashMap<>();
+        Map<String , List<BaseUser>> resultDate = new HashMap<>();
+        List<BaseUser> userList;
+
+        //首先进行当前管理员用户权限的检验
+        // end 管理员权限的检验
+
+        //验证userId的有效性
+        //1、userId不能为空
+        if (userId == null || userId.trim().length() <= 0) {
+            resultVo.setCode(AddResult.FIELD_NULL.getValue());
+            resultVo.setMsg(AddResult.FIELD_NULL.getMsg()+":userId不能为空");
+            return resultVo;
+        }
+        //2、新增加的userId即表示为工号不能在数据库中存在
+
+        // 验证参数username的可用性并封装参数
+
+        // end 结束username的验证
+
+        // 验证参数duty的可用性并封装参数
+
+        // end 结束duty的验证
+
+        userList = userService.getAllSelectedUser(limits);
+        resultVo.setCode(AddResult.SUCCESS.getValue());
+        resultVo.setMsg(AddResult.SUCCESS.getMsg());
+        resultDate.put("userList", userList);
+        resultVo.setData(resultDate);
+
         return resultVo;
     }
 

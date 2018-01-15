@@ -88,14 +88,14 @@ public class AdminController {
 
         //验证登录参数不能为空
         if (!ArgumentsValidator.checkUsernameAndPasswordNotNull(username, password)) {
-            resultVo.setStatus_code(AddResult.FIELD_NULL.getValue());
+            resultVo.setCode(AddResult.FIELD_NULL.getValue());
             resultVo.setMsg(AddResult.FIELD_NULL.getMsg());
             return resultVo;
         }
 
         //验证用户名不能重复
         if (userService.getUserByUsername(username) != null) {
-            resultVo.setStatus_code(AddResult.DOUBLE_USERNAME.getValue());
+            resultVo.setCode(AddResult.DOUBLE_USERNAME.getValue());
             resultVo.setMsg(AddResult.DOUBLE_USERNAME.getMsg());
             return resultVo;
         }
@@ -108,7 +108,7 @@ public class AdminController {
             Integer.parseInt(userId);
         }catch (Exception e) {
             e.printStackTrace();
-            resultVo.setStatus_code(AddResult.USERID_NOT_NUMBER.getValue());
+            resultVo.setCode(AddResult.USERID_NOT_NUMBER.getValue());
             resultVo.setMsg(AddResult.USERID_NOT_NUMBER.getMsg());
             return resultVo;
         }
@@ -121,12 +121,12 @@ public class AdminController {
         Role role = new Role();
         role.setRoleId(permission);
         if (userService.addAdminUserAndRole(user, role) < 0) {
-            resultVo.setStatus_code(AddResult.FAILED_IN_INSERT.getValue());
+            resultVo.setCode(AddResult.FAILED_IN_INSERT.getValue());
             resultVo.setMsg(AddResult.FAILED_IN_INSERT.getMsg());
             return resultVo;
         }
 
-        resultVo.setStatus_code(AddResult.SUCCESS.getValue());
+        resultVo.setCode(AddResult.SUCCESS.getValue());
         resultVo.setMsg(AddResult.SUCCESS.getMsg());
         resultVo.setData(user);
         return resultVo;

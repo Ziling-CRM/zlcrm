@@ -249,6 +249,17 @@
     where user_id = #{userId, jdbcType=VARCHAR} and status = "ON"
   </update>
 
+  <select id="getAllUser" parameterType="java.lang.String" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM
+    base_user u
+    WHERE
+    u.user_id NOT IN (SELECT r.user_id FROM user_role r) and u.`status` = 'ON'
+  </select>
+
+
+
   <!--
   wzy
   -->

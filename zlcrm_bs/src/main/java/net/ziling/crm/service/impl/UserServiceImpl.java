@@ -6,12 +6,13 @@ import net.ziling.crm.common.wrap.UserStatus;
 import net.ziling.crm.dao.*;
 import net.ziling.crm.entity.*;
 import net.ziling.crm.service.UserService;
-import org.apache.commons.lang.time.DateUtils;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Description:
@@ -48,7 +49,7 @@ public class UserServiceImpl implements UserService {
         user = baseUserMapper.selectByUsername(username);
 
         //没有找到该用户的信息
-        if (user == null || (user.getUsername()==null) || (user.getUsername().length()<=0)) {
+        if (user == null || (user.getUsername() == null) || (user.getUsername().length() <= 0)) {
             return null;
         }
 
@@ -63,34 +64,34 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Role getUserRole(String userId) {
-        System.out.println("userId:"+userId);
+        System.out.println("userId:" + userId);
         UserRole userRole = userRoleMapper.getUserRoleByUserId(userId);
         return roleMapper.selectByPrimaryKey(userRole.getRoleId());
     }
 
     @Override
     public List<BaseUser> getAllAdmin() {
-        return  baseUserMapper.getAllAdmin();
+        return baseUserMapper.getAllAdmin();
     }
 
     @Override
     public BaseUser getUserByUsername(String username) {
-        if (username == null || username.trim().length()<=0) {
+        if (username == null || username.trim().length() <= 0) {
             return null;
         }
         return baseUserMapper.selectByUsername(username);
-        }
+    }
 
-                @Override
-                public int addAdminUserAndRole(BaseUser user, Role role) {
-                    if (user == null) {
-                        return -1;
-                    }
-                    try {
-                        user.setStatus(UserStatus.ON.toString());
-                        baseUserMapper.insertSelective(user);
-                    } catch (Exception e) {
-                        e.printStackTrace();
+    @Override
+    public int addAdminUserAndRole(BaseUser user, Role role) {
+        if (user == null) {
+            return -1;
+        }
+        try {
+            user.setStatus(UserStatus.ON.toString());
+            baseUserMapper.insertSelective(user);
+        } catch (Exception e) {
+            e.printStackTrace();
             return -1;
         }
 
@@ -111,34 +112,34 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public int updateByUserId(BaseUser user, String permission){
+    public int updateByUserId(BaseUser user, String permission) {
         int res = baseUserMapper.updateUserByUserIdSimple(user);
         System.out.println(res);
-        if(res == 0) {
+        if (res == 0) {
             return res;
         }
 
         res = userRoleMapper.updateUserRoleByUserId(user.getUserId(), permission);
         System.out.println(res);
-        if(res == 0) {
+        if (res == 0) {
             return -1;
-        }else{
+        } else {
             return res;
         }
     }
 
     @Override
-    public int deleteByUserId(String userId){
+    public int deleteByUserId(String userId) {
         return baseUserMapper.deleteByUserId(userId);
     }
 
     @Override
-    public Map<String, Object> getUserByUserId(String userId){
+    public Map<String, Object> getUserByUserId(String userId) {
         Map<String, Object> resultUser = new HashMap<>();
 
         //获取基本信息
         BaseUser user = baseUserMapper.selectByUserId(userId);
-        if(user == null){
+        if (user == null) {
             resultUser.put("Error", GetUserResult.USER_NOT_EXIST.getValue());
             resultUser.put("ErrorMsg", GetUserResult.USER_NOT_EXIST.getMsg());
             return resultUser;
@@ -146,7 +147,7 @@ public class UserServiceImpl implements UserService {
 
         //获取dutyId
         List<String> dutyIds = userDutyMapper.selectByUserId(userId);
-        if(dutyIds.size() == 0){
+        if (dutyIds.size() == 0) {
             resultUser.put("Error", GetUserResult.DUTY_NOT_EXIST.getValue());
             resultUser.put("ErrorMsg", GetUserResult.DUTY_NOT_EXIST.getMsg());
             return resultUser;
@@ -154,7 +155,7 @@ public class UserServiceImpl implements UserService {
 
         //获取proId
         List<String> proIds = userProjectMapper.selectProIdByUserId(userId);
-        if(proIds.size() == 0){
+        if (proIds.size() == 0) {
             resultUser.put("Error", GetUserResult.PROJECT_NOT_EXIST.getValue());
             resultUser.put("ErrorMsg", GetUserResult.PROJECT_NOT_EXIST.getMsg());
             return resultUser;
@@ -163,11 +164,11 @@ public class UserServiceImpl implements UserService {
         List<Duty> duties = new ArrayList<Duty>();
         duties.clear();
         //获取duty信息
-        for (String id:dutyIds) {
+        for (String id : dutyIds) {
             Duty t = dutyMapper.selectDutyByDutyId(id);
-            if(t != null) {
+            if (t != null) {
                 duties.add(t);
-            }else{
+            } else {
                 resultUser.put("Error", GetUserResult.DUTY_ID_NOT_EXIST.getValue());
                 resultUser.put("ErrorMsg", GetUserResult.DUTY_ID_NOT_EXIST.getMsg());
                 return resultUser;
@@ -177,11 +178,11 @@ public class UserServiceImpl implements UserService {
         List<Project> projects = new ArrayList<Project>();
         projects.clear();
         //获取project信息
-        for (String id:proIds){
+        for (String id : proIds) {
             Project t = projectMapper.selectProjectByProId(id);
-            if(t != null){
+            if (t != null) {
                 projects.add(t);
-            }else {
+            } else {
                 resultUser.put("Error", GetUserResult.PROJECT_ID_NOT_EXIST.getValue());
                 resultUser.put("ErrorMsg", GetUserResult.PROJECT_ID_NOT_EXIST.getMsg());
                 return resultUser;
@@ -200,12 +201,71 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public int addBaseUser(BaseUser baseUser) throws Exception {
-        try{
+        try {
+            baseUser.setStatus(UserStatus.ON.toString());
             return baseUserMapper.insertSelective(baseUser);
-        }catch (Exception e) {
-            throw  e;
-        }finally {
+        } catch (Exception e) {
+            throw e;
+        } finally {
             return 0;
         }
+    }
+
+    @Override
+    public int addUserDuty(UserDuty userDuty, Duty duty) {
+        if (userDuty.getUserId() == null || userDuty.getDutyId() == null ||
+                userDuty.getDutyId().trim().length() <= 0 || userDuty.getUserId().trim().length() <= 0) {
+            return 3;
+        }
+
+        try {
+            dutyMapper.insertSelective(duty);
+        }catch (Exception e) {
+            e.printStackTrace();
+            return 2;
+        }
+
+        try {
+            userDutyMapper.insertSelective(userDuty);
+        }catch (Exception e) {
+            e.printStackTrace();
+            return 1;
+        }
+
+        return 0;
+    }
+
+    @Override
+    public int addUserProject(UserProject userProject, Project project) {
+        if (userProject.getUserId() == null || userProject.getProId() == null ||
+                userProject.getProId().trim().length() <= 0 || userProject.getUserId().trim().length() <= 0) {
+            return 3;
+        }
+
+        try {
+            projectMapper.insertSelective(project);
+        }catch (Exception e) {
+            e.printStackTrace();
+            return 2;
+        }
+
+        try {
+            userProjectMapper.insertSelective(userProject);
+        }catch (Exception e) {
+            e.printStackTrace();
+            return 1;
+        }
+
+        return 0;
+    }
+
+    @Override
+    public List<BaseUser> getAllSelectedUser(Map<String, String> limits) {
+        return baseUserMapper.getAllUser();
+    }
+
+    @Override
+    public BaseUser judgeUserExist(String userId) {
+        return baseUserMapper.selectByUserId(userId);
     }
 }
