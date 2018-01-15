@@ -69,7 +69,7 @@ public interface UserService {
      * @param userId
      * @return
      */
-    public BaseUser getUserByUserId(String userId);
+    public Map<String, Object> getUserByUserId(String userId);
 
     /**
      * 添加客户信息
