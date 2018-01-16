@@ -291,44 +291,10 @@ public class UserController {
         List<Duty> duties = (List<Duty>)(userResult.get("Duties"));
         List<Project> projects = (List<Project>)(userResult.get("Projects"));
 
-        resultVo.setAdminDatas("userId", userId);
-        resultVo.setAdminDatas("realname",user.getRealname());
-        resultVo.setAdminDatas("gender",user.getGender());
-        resultVo.setAdminDatas("telephone",user.getTelephone());
-        resultVo.setAdminDatas("qq",user.getQq());
-        resultVo.setAdminDatas("email",user.getEmail());
-        resultVo.setAdminDatas("creditCard",user.getCreditcard());
-        resultVo.setAdminDatas("creditAddress",user.getCreditaddress());
-        resultVo.setAdminDatas("alipay",user.getAlipay());
-        resultVo.setAdminDatas("address",user.getAddress());
-        if(duties.size() != 0) {
-            resultVo.setAdminDatas("skill", duties.get(0).getSkill());
-            resultVo.setAdminDatas("workYears", duties.get(0).getWorkYears());
-            resultVo.setAdminDatas("post", duties.get(0).getPost());
-            resultVo.setAdminDatas("company", duties.get(0).getCompany());
-            resultVo.setAdminDatas("capacityRate", duties.get(0).getCapacityRate());
-            resultVo.setAdminDatas("creditRate", duties.get(0).getCreditRate());
-            resultVo.setAdminDatas("hireRate", duties.get(0).getRehireRate());
-            resultVo.setAdminDatas("checkRate", duties.get(0).getCheckRate());
-            resultVo.setAdminDatas("checkNum", duties.get(0).getCheckNum());
-            resultVo.setAdminDatas("proceedNum", duties.get(0).getProceedNum());
-            resultVo.setAdminDatas("userIncome", duties.get(0).getUserIncome());
-            resultVo.setAdminDatas("monthIncome", duties.get(0).getMonthIncome());
-        }else{
-            resultVo.setAdminDatas("skill", "");
-            resultVo.setAdminDatas("workYears", "");
-            resultVo.setAdminDatas("post", "");
-            resultVo.setAdminDatas("company", "");
-            resultVo.setAdminDatas("capacityRate", "");
-            resultVo.setAdminDatas("creditRate", "");
-            resultVo.setAdminDatas("hireRate", "");
-            resultVo.setAdminDatas("checkRate", "");
-            resultVo.setAdminDatas("checkNum", "");
-            resultVo.setAdminDatas("proceedNum", "");
-            resultVo.setAdminDatas("userIncome", "");
-            resultVo.setAdminDatas("monthIncome", "");
-        }
-        resultVo.setAdminDatas("projectslist",projects);
+        resultVo.setAdminDatas("baseUser", user);
+        resultVo.setAdminDatas("duty", duties);
+
+        resultVo.setAdminDatas("projectsList",projects);
         return resultVo;
     }
 
