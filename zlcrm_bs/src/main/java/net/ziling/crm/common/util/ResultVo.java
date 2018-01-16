@@ -13,11 +13,11 @@ public class ResultVo {
     public String msg;
     private Object data;
 
-    public Integer getStatus_code() {
+    public Integer getCode() {
         return code;
     }
 
-    public void setStatus_code(Integer code) {
+    public void setCode(Integer code) {
         this.code = code;
     }
 

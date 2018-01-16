@@ -87,11 +87,17 @@ public interface BaseUserMapper {
      */
     BaseUser selectByUserId(String userId);
 
-
     /**
      * 根据客户Id修改客户基本信息
      * @param user
      * @return
      */
     int updateByUserId(BaseUser user);
+
+    /**
+     * 根据查询条件查找相关的所有的用户信息
+     * @return 查找到的用户的集合
+     */
+    List<BaseUser> getAllUser();
+
 }
