@@ -4,7 +4,6 @@ import net.ziling.crm.common.util.AdminResultVo;
 import net.ziling.crm.common.util.UUIDTools;
 import net.ziling.crm.common.wrap.GetUserResult;
 import net.ziling.crm.common.wrap.UpdateUserResult;
-import net.ziling.crm.common.wrap.LoginResult;
 import net.ziling.crm.entity.*;
 import net.ziling.crm.service.UserService;
 import net.ziling.crm.common.util.ResultVo;
@@ -250,7 +249,7 @@ public class UserController {
 
     @RequestMapping("/listAllUser")
     @ResponseBody
-    public ResultVo listAllUser(String userId, String duty, String username, HttpSession session, HttpServletRequest request) {
+    public ResultVo listAllUser(String userId, String duty, String realname, HttpSession session, HttpServletRequest request) {
         ResultVo resultVo = new ResultVo();
         Map<String , String> limits = new HashMap<>();
         Map<String , List<BaseUser>> resultDate = new HashMap<>();
@@ -258,23 +257,6 @@ public class UserController {
 
         //首先进行当前管理员用户权限的检验
         // end 管理员权限的检验
-
-        //验证userId的有效性
-        //1、userId不能为空
-        if (userId == null || userId.trim().length() <= 0) {
-            resultVo.setCode(AddResult.FIELD_NULL.getValue());
-            resultVo.setMsg(AddResult.FIELD_NULL.getMsg()+":userId不能为空");
-            return resultVo;
-        }
-        //2、新增加的userId即表示为工号不能在数据库中存在
-
-        // 验证参数username的可用性并封装参数
-
-        // end 结束username的验证
-
-        // 验证参数duty的可用性并封装参数
-
-        // end 结束duty的验证
 
         userList = userService.getAllSelectedUser(limits);
         resultVo.setCode(AddResult.SUCCESS.getValue());
