@@ -86,4 +86,12 @@ public interface BaseUserMapper {
      * @return
      */
     BaseUser selectByUserId(String userId);
+
+
+    /**
+     * 根据客户Id修改客户基本信息
+     * @param user
+     * @return
+     */
+    int updateByUserId(BaseUser user);
 }
