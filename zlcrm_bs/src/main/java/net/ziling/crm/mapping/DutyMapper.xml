@@ -230,4 +230,47 @@
     where duty_id = #{dutyId, jdbcType=VARCHAR}
   </select>
 
+  <update id="updateDutyById" parameterType="net.ziling.crm.entity.Duty">
+    update zc_duty
+    <set>
+      <if test="skill != null" >
+        skill = #{skill,jdbcType=VARCHAR},
+      </if>
+      <if test="workYears != null" >
+        work_years = #{workYears,jdbcType=VARCHAR},
+      </if>
+      <if test="post != null" >
+        post = #{post,jdbcType=VARCHAR},
+      </if>
+      <if test="company != null" >
+        company = #{company,jdbcType=VARCHAR},
+      </if>
+      <if test="capacityRate != null" >
+        capacity_rate = #{capacityRate,jdbcType=VARCHAR},
+      </if>
+      <if test="creditRate != null" >
+        credit_rate = #{creditRate,jdbcType=VARCHAR},
+      </if>
+      <if test="rehireRate != null" >
+        rehire_rate = #{rehireRate,jdbcType=VARCHAR},
+      </if>
+      <if test="checkRate != null" >
+        check_rate = #{checkRate,jdbcType=VARCHAR},
+      </if>
+      <if test="checkNum >= 0" >
+        check_num = #{checkNum,jdbcType=INTEGER},
+      </if>
+      <if test="proceedNum >= 0" >
+        proceed_num = #{proceedNum,jdbcType=INTEGER},
+      </if>
+      <if test="userIncome >= 0" >
+        user_income = #{userIncome,jdbcType=REAL},
+      </if>
+      <if test="monthIncome >= 0" >
+        month_income = #{monthIncome,jdbcType=REAL},
+      </if>
+    </set>
+    where duty_id = #{dutyId, jdbcType=VARCHAR}
+  </update>
+
 </mapper>

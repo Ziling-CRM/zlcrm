@@ -3,12 +3,14 @@ package net.ziling.crm.controller;
 import net.ziling.crm.common.util.AdminResultVo;
 import net.ziling.crm.common.util.UUIDTools;
 import net.ziling.crm.common.wrap.GetUserResult;
+import net.ziling.crm.common.wrap.UpdateUserResult;
 import net.ziling.crm.common.wrap.LoginResult;
 import net.ziling.crm.entity.*;
 import net.ziling.crm.service.UserService;
 import net.ziling.crm.common.util.ResultVo;
 import net.ziling.crm.common.wrap.AddResult;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -317,19 +319,94 @@ public class UserController {
         resultVo.setAdminDatas("creditAddress",user.getCreditaddress());
         resultVo.setAdminDatas("alipay",user.getAlipay());
         resultVo.setAdminDatas("address",user.getAddress());
-        resultVo.setAdminDatas("skill", duties.get(0).getSkill());
-        resultVo.setAdminDatas("workYears",duties.get(0).getWorkYears());
-        resultVo.setAdminDatas("post", duties.get(0).getPost());
-        resultVo.setAdminDatas("company", duties.get(0).getCompany());
-        resultVo.setAdminDatas("capacityRate", duties.get(0).getCapacityRate());
-        resultVo.setAdminDatas("creditRate", duties.get(0).getCreditRate());
-        resultVo.setAdminDatas("hireRate", duties.get(0).getRehireRate());
-        resultVo.setAdminDatas("checkRate", duties.get(0).getCheckRate());
-        resultVo.setAdminDatas("checkNum", duties.get(0).getCheckNum());
-        resultVo.setAdminDatas("proceedNum", duties.get(0).getProceedNum());
-        resultVo.setAdminDatas("userIncome", duties.get(0).getUserIncome());
-        resultVo.setAdminDatas("monthIncome", duties.get(0).getMonthIncome());
+        if(duties.size() != 0) {
+            resultVo.setAdminDatas("skill", duties.get(0).getSkill());
+            resultVo.setAdminDatas("workYears", duties.get(0).getWorkYears());
+            resultVo.setAdminDatas("post", duties.get(0).getPost());
+            resultVo.setAdminDatas("company", duties.get(0).getCompany());
+            resultVo.setAdminDatas("capacityRate", duties.get(0).getCapacityRate());
+            resultVo.setAdminDatas("creditRate", duties.get(0).getCreditRate());
+            resultVo.setAdminDatas("hireRate", duties.get(0).getRehireRate());
+            resultVo.setAdminDatas("checkRate", duties.get(0).getCheckRate());
+            resultVo.setAdminDatas("checkNum", duties.get(0).getCheckNum());
+            resultVo.setAdminDatas("proceedNum", duties.get(0).getProceedNum());
+            resultVo.setAdminDatas("userIncome", duties.get(0).getUserIncome());
+            resultVo.setAdminDatas("monthIncome", duties.get(0).getMonthIncome());
+        }else{
+            resultVo.setAdminDatas("skill", "");
+            resultVo.setAdminDatas("workYears", "");
+            resultVo.setAdminDatas("post", "");
+            resultVo.setAdminDatas("company", "");
+            resultVo.setAdminDatas("capacityRate", "");
+            resultVo.setAdminDatas("creditRate", "");
+            resultVo.setAdminDatas("hireRate", "");
+            resultVo.setAdminDatas("checkRate", "");
+            resultVo.setAdminDatas("checkNum", "");
+            resultVo.setAdminDatas("proceedNum", "");
+            resultVo.setAdminDatas("userIncome", "");
+            resultVo.setAdminDatas("monthIncome", "");
+        }
         resultVo.setAdminDatas("projectslist",projects);
+        return resultVo;
+    }
+
+    @RequestMapping("/updateUser")
+    @ResponseBody
+    public AdminResultVo updateUser(HttpSession session, HttpServletRequest request) throws Exception{
+        AdminResultVo resultVo = new AdminResultVo();
+        BaseUser user = new BaseUser();
+        Duty duty = new Duty();
+        Project project = new Project();
+        Map params = request.getParameterMap();
+
+        //验证用户Id是否合法
+        if(params.get("userId") == null){
+            resultVo.setCode(UpdateUserResult.LACK_OF_USERID.getValue());
+            resultVo.setMsg(UpdateUserResult.LACK_OF_USERID.getMsg());
+            return resultVo;
+        }
+        //验证数字
+        try {
+            if (params.get("monthIncome") != null) {
+                Float.parseFloat(params.get("monthIncome").toString());
+            }
+            if (params.get("userIncome") != null){
+                Float.parseFloat(params.get("userIncome").toString());
+            }
+            if(params.get("proceedNum") != null){
+                Integer.parseInt(params.get("proceedNum").toString());
+            }
+            if(params.get("checkNum") != null){
+                Integer.parseInt(params.get("checkNum").toString());
+            }
+        }catch (Exception e){
+            resultVo.setCode(UpdateUserResult.PARAMETER_NOT_VALID.getValue());
+            resultVo.setMsg(UpdateUserResult.PARAMETER_NOT_VALID.getMsg());
+            return resultVo;
+        }
+        BeanUtils.populate(user, params);
+        BeanUtils.populate(duty, params);
+        BeanUtils.populate(project, params);
+
+        Map<String, Object> res = userService.updateUserInf(user,project,duty);
+        resultVo.setCode(Integer.parseInt(res.get("Error").toString()));
+        resultVo.setMsg(res.get("ErrorMsg").toString());
+        return resultVo;
+    }
+
+    @RequestMapping("/deleteUser")
+    @ResponseBody
+    public AdminResultVo deleteUser(String userId, HttpSession session, HttpServletRequest request){
+        AdminResultVo resultVo = new AdminResultVo();
+
+        if(userService.deleteByUserId(userId) == 0){
+            resultVo.setCode(1);
+            resultVo.setMsg("用户不存在");
+        }else{
+            resultVo.setCode(0);
+            resultVo.setMsg("删除成功");
+        }
+
         return resultVo;
     }
 }

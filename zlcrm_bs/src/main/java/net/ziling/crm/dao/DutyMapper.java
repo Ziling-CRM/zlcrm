@@ -57,4 +57,11 @@ public interface DutyMapper {
      * @return
      */
     Duty selectDutyByDutyId(String dutyId);
+
+    /**
+     * 根据DutyId修改客户的职责
+     * @param duty
+     * @return
+     */
+    int updateDutyById(Duty duty);
 }

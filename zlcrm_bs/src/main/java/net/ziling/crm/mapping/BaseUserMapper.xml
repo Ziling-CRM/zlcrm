@@ -262,6 +262,7 @@
 
   <!--
   wzy
+  status = "ON"
   -->
   <select id="selectByUserId" parameterType="java.lang.String" resultMap="BaseResultMap">
     select
@@ -269,5 +270,46 @@
     from base_user
     where user_id = #{userId, jdbcType=VARCHAR} and status="ON"
   </select>
+
+
+  <update id="updateByUserId" parameterType="net.ziling.crm.entity.BaseUser">
+    update base_user
+    <set>
+      <if test="username != null">
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="realname != null">
+        realname = #{realname,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null">
+        telephone = #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="gender != null">
+        gender = #{gender,jdbcType=VARCHAR},
+      </if>
+      <if test="qq != null">
+        qq = #{qq,jdbcType=VARCHAR},
+      </if>
+      <if test="creditcard != null">
+        creditCard = #{creditcard,jdbcType=VARCHAR},
+      </if>
+      <if test="creditaddress != null">
+        creditAddress = #{creditaddress,jdbcType=VARCHAR},
+      </if>
+      <if test="alipay != null">
+        alipay = #{alipay,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where user_id = #{userId,jdbcType=VARCHAR} and status = "ON"
+  </update>
 
 </mapper>

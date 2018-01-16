@@ -1,7 +1,7 @@
 package net.ziling.crm.service;
 
+import javafx.util.Pair;
 import net.ziling.crm.entity.*;
-
 import java.util.List;
 import java.util.Map;
 
@@ -78,6 +78,15 @@ public interface UserService {
     public int addBaseUser(BaseUser baseUser) throws Exception;
 
     /**
+     * 修改客户信息，可选user，project以及duty
+     * @param user
+     * @param project
+     * @param duty
+     * @return
+     */
+    public Map<String, Object> updateUserInf(BaseUser user, Project project, Duty duty);
+
+   /**
      * 添加用户的职责信息，其中包括用户和职责的关联表，和职责的信息表
      * @param userDuty
      * @param duty
@@ -106,4 +115,5 @@ public interface UserService {
      * @return
      */
     public BaseUser judgeUserExist(String userId);
+
 }
