@@ -80,11 +80,11 @@ public interface UserService {
     /**
      * 修改客户信息，可选user，project以及duty
      * @param user
-     * @param project
-     * @param duty
      * @return
      */
-    public Map<String, Object> updateUserInf(BaseUser user, Project project, Duty duty);
+    public int updateUserInf(BaseUser user);
+    public int updateUserDuty(Duty duty, String userId);
+    public int updateUserProject(Project project, String userId);
 
    /**
      * 添加用户的职责信息，其中包括用户和职责的关联表，和职责的信息表
