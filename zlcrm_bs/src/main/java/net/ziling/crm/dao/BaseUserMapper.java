@@ -3,6 +3,7 @@ package net.ziling.crm.dao;
 import net.ziling.crm.entity.BaseUser;
 
 import java.util.List;
+import java.util.Map;
 
 public interface BaseUserMapper {
     /**
@@ -96,8 +97,9 @@ public interface BaseUserMapper {
 
     /**
      * 根据查询条件查找相关的所有的用户信息
+     * @param limits 查询的限制条件
      * @return 查找到的用户的集合
      */
-    List<BaseUser> getAllUser();
+    List<BaseUser> getAllUser(Map<String, Object> limits);
 
 }

@@ -213,6 +213,10 @@ public class UserServiceImpl implements UserService {
     public int addBaseUser(BaseUser baseUser) throws Exception {
         try {
             baseUser.setStatus(UserStatus.ON.toString());
+            UserDuty userDuty = new UserDuty();
+            userDuty.setUserId(baseUser.getUserId());
+            userDuty.setDutyId("0");
+            userDutyMapper.insertSelective(userDuty);
             return baseUserMapper.insertSelective(baseUser);
         } catch (Exception e) {
             throw e;
@@ -277,7 +281,7 @@ public class UserServiceImpl implements UserService {
         }
 
         try {
-            userDutyMapper.insertSelective(userDuty);
+            userDutyMapper.updateByPrimaryKey(userDuty);
         }catch (Exception e) {
             e.printStackTrace();
             return 1;
@@ -311,8 +315,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<BaseUser> getAllSelectedUser(Map<String, String> limits) {
-        return baseUserMapper.getAllUser();
+    public List<BaseUser> getAllSelectedUser(Map<String, Object> limits) {
+
+        return baseUserMapper.getAllUser(limits);
     }
 
     @Override

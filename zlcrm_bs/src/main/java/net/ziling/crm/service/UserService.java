@@ -107,7 +107,7 @@ public interface UserService {
      * @param limits 限制的条件的Map集合
      * @return 所有满足条件的用户的集合
      */
-    public List<BaseUser> getAllSelectedUser(Map<String, String> limits);
+    public List<BaseUser> getAllSelectedUser(Map<String, Object> limits);
 
     /**
      * 通过userId判断用户是否存在

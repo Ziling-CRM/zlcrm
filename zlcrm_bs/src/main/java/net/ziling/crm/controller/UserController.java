@@ -108,7 +108,7 @@ public class UserController {
             resultVo.setMsg(AddResult.FIELD_NULL.getMsg()+":userId不能为空");
             return resultVo;
         }
-        //2、新增加的userId即表示为工号不能在数据库中存在
+        //2、新增加的userId即表示为工号在数据库中存在
         //验证用户名必须先存在
         if (userService.judgeUserExist(userId) == null) {
             resultVo.setCode(AddResult.USER_NOT_FIND.getValue());
@@ -251,12 +251,19 @@ public class UserController {
     @ResponseBody
     public ResultVo listAllUser(String userId, String duty, String realname, HttpSession session, HttpServletRequest request) {
         ResultVo resultVo = new ResultVo();
-        Map<String , String> limits = new HashMap<>();
+        Map<String , Object> limits = new HashMap<>();
         Map<String , List<BaseUser>> resultDate = new HashMap<>();
         List<BaseUser> userList;
 
         //首先进行当前管理员用户权限的检验
         // end 管理员权限的检验
+
+
+
+        limits.put("userId",userId);
+        limits.put("duty",duty);
+        limits.put("realname",realname);
+
 
         userList = userService.getAllSelectedUser(limits);
         resultVo.setCode(AddResult.SUCCESS.getValue());
