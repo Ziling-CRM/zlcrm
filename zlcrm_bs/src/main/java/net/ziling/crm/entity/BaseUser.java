@@ -473,4 +473,16 @@ public class BaseUser {
     public void setAlipay(String alipay) {
         this.alipay = alipay == null ? null : alipay.trim();
     }
+
+    /**
+     * 检查是否可以更新，即参数域不全部为空
+     * @author wzy
+     * @return bool
+     */
+    public boolean isUpdatable(){
+        return !(this.address == null && this.alipay == null &&
+        this.realname == null && this.telephone == null &&
+        this.email == null && this.gender == null && this.qq == null
+        && this.creditcard == null && this.creditaddress == null);
+    }
 }

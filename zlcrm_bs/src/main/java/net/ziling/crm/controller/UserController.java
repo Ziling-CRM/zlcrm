@@ -310,42 +310,127 @@ public class UserController {
     public AdminResultVo updateUser(HttpSession session, HttpServletRequest request) throws Exception{
         AdminResultVo resultVo = new AdminResultVo();
         BaseUser user = new BaseUser();
-        Duty duty = new Duty();
-        Project project = new Project();
         Map params = request.getParameterMap();
-
         //验证用户Id是否合法
         if(params.get("userId") == null){
             resultVo.setCode(UpdateUserResult.LACK_OF_USERID.getValue());
             resultVo.setMsg(UpdateUserResult.LACK_OF_USERID.getMsg());
             return resultVo;
         }
+        BeanUtils.populate(user, params);
+        if(user.isUpdatable()){
+            if(userService.updateUserInf(user)!=0) {
+                resultVo.setCode(UpdateUserResult.USER_NOT_EXIST.getValue());
+                resultVo.setMsg(UpdateUserResult.USER_NOT_EXIST.getMsg());
+            }else{
+                resultVo.setCode(UpdateUserResult.SUCCESS.getValue());
+                resultVo.setMsg(UpdateUserResult.SUCCESS.getMsg());
+            }
+        }else{
+            resultVo.setCode(UpdateUserResult.PARAMETER_ALL_NULL.getValue());
+            resultVo.setMsg(UpdateUserResult.PARAMETER_ALL_NULL.getMsg());
+        }
+        return resultVo;
+    }
+
+    @RequestMapping("/updateDuty")
+    @ResponseBody
+    public AdminResultVo updateDuty(String userId, String monthIncome, String userIncome,
+                                    String checkNum, String proceedNum, HttpSession session,
+                                    HttpServletRequest request)throws Exception{
+        AdminResultVo resultVo = new AdminResultVo();
+        Duty duty = new Duty();
+        Map params = request.getParameterMap();
+        BeanUtils.populate(duty, params);
+        int res = 0;
+
+        //验证用户Id是否合法
+        if(params.get("userId") == null || params.get("dutyId") == null){
+            resultVo.setCode(UpdateUserResult.LACK_OF_USERID.getValue());
+            resultVo.setMsg(UpdateUserResult.LACK_OF_USERID.getMsg());
+            return resultVo;
+        }
+
         //验证数字
         try {
             if (params.get("monthIncome") != null) {
-                Float.parseFloat(params.get("monthIncome").toString());
+                if(Float.parseFloat(monthIncome) < 0){
+                    throw new Exception();
+                }
             }
             if (params.get("userIncome") != null){
-                Float.parseFloat(params.get("userIncome").toString());
+                if (Float.parseFloat(userIncome) < 0) {
+                    throw new Exception();
+                }
             }
             if(params.get("proceedNum") != null){
-                Integer.parseInt(params.get("proceedNum").toString());
+                if (Integer.parseInt(proceedNum) < 0) {
+                    throw new Exception();
+                }
             }
             if(params.get("checkNum") != null){
-                Integer.parseInt(params.get("checkNum").toString());
+                if(Integer.parseInt(checkNum) < 0){
+                    throw new Exception();
+                }
             }
         }catch (Exception e){
             resultVo.setCode(UpdateUserResult.PARAMETER_NOT_VALID.getValue());
             resultVo.setMsg(UpdateUserResult.PARAMETER_NOT_VALID.getMsg());
             return resultVo;
         }
-        BeanUtils.populate(user, params);
-        BeanUtils.populate(duty, params);
-        BeanUtils.populate(project, params);
 
-        Map<String, Object> res = userService.updateUserInf(user,project,duty);
-        resultVo.setCode(Integer.parseInt(res.get("Error").toString()));
-        resultVo.setMsg(res.get("ErrorMsg").toString());
+        res = userService.updateUserDuty(duty, userId);
+        if(duty.isUpdatable()){
+            if(res == -1){
+                resultVo.setCode(UpdateUserResult.DUTY_ID_NOT_EXIST.getValue());
+                resultVo.setMsg(UpdateUserResult.DUTY_ID_NOT_EXIST.getMsg());
+            }else if(res == -2) {
+                resultVo.setCode(UpdateUserResult.DUTY_NOT_EXIST.getValue());
+                resultVo.setMsg(UpdateUserResult.DUTY_NOT_EXIST.getMsg());
+            }else{
+                resultVo.setCode(UpdateUserResult.SUCCESS.getValue());
+                resultVo.setMsg(UpdateUserResult.SUCCESS.getMsg());
+            }
+        }else{
+            resultVo.setCode(UpdateUserResult.PARAMETER_ALL_NULL.getValue());
+            resultVo.setMsg(UpdateUserResult.PARAMETER_ALL_NULL.getMsg());
+        }
+
+        return resultVo;
+    }
+
+    @RequestMapping("/updateProject")
+    @ResponseBody
+    public AdminResultVo updateProject(String userId, HttpSession session, HttpServletRequest request)throws Exception{
+        AdminResultVo resultVo = new AdminResultVo();
+        Project project = new Project();
+        Map params = request.getParameterMap();
+        BeanUtils.populate(project, params);
+        int res = 0;
+        //验证用户Id是否合法
+        if(userId == null || params.get("proId") == null){
+            resultVo.setCode(UpdateUserResult.LACK_OF_USERID.getValue());
+            resultVo.setMsg(UpdateUserResult.LACK_OF_USERID.getMsg());
+            return resultVo;
+        }
+
+        if(project.isUpdatable()){
+            res = userService.updateUserProject(project, userId);
+            if(res == -1) {
+                resultVo.setCode(UpdateUserResult.PROJECT_ID_NOT_EXIST.getValue());
+                resultVo.setMsg(UpdateUserResult.PROJECT_ID_NOT_EXIST.getMsg());
+            }else if(res == -2){
+                resultVo.setCode(UpdateUserResult.PROJECT_NOT_EXIST.getValue());
+                resultVo.setMsg(UpdateUserResult.PROJECT_NOT_EXIST.getMsg());
+            }else{
+                resultVo.setCode(UpdateUserResult.SUCCESS.getValue());
+                resultVo.setMsg(UpdateUserResult.SUCCESS.getMsg());
+            }
+        }else{
+            resultVo.setCode(UpdateUserResult.PARAMETER_ALL_NULL.getValue());
+            resultVo.setMsg(UpdateUserResult.PARAMETER_ALL_NULL.getMsg());
+        }
+
         return resultVo;
     }
 

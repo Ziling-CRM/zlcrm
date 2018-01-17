@@ -226,46 +226,38 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Map<String, Object> updateUserInf (BaseUser user, Project project, Duty duty){
-        Map<String, Object> result = new HashMap<>();
-        String warningMessage = new String("");
-        boolean warn = false;
-
-        if(baseUserMapper.updateByUserId(user) == 0){
-            result.put("Error", UpdateUserResult.USER_NOT_EXIST.getValue());
-            result.put("ErrorMsg", UpdateUserResult.USER_NOT_EXIST.getMsg());
-            return result;
+    public int updateUserInf (BaseUser user){
+        if (baseUserMapper.updateByUserId(user) == 0) {
+            return -1;
         }
-
-        if (project.getProId() == null && duty.getDutyId() == null){
-            result.put("Error", UpdateUserResult.PARAMETER_ALL_NULL.getValue());
-            result.put("ErrorMsg", UpdateUserResult.PARAMETER_ALL_NULL.getMsg());
-        }
-
-        if(project.getProId() != null){
-            if(projectMapper.updateByPrimaryKeySelective(project) == 0){
-                warn = true;
-                warningMessage += UpdateUserResult.PROJECT_ID_NOT_EXIST.getMsg();
-            }
-        }
-
-        if(duty.getDutyId() != null){
-            if(dutyMapper.updateDutyById(duty) == 0) {
-                warn = true;
-                warningMessage += UpdateUserResult.DUTY_ID_NOT_EXIST.getMsg();
-            }
-        }
-
-        if(warn){
-            result.put("Error", UpdateUserResult.HAS_WARNINGS.getValue());
-            result.put("ErrorMsg", warningMessage);
-        }else{
-            result.put("Error", UpdateUserResult.SUCCESS.getValue());
-            result.put("ErrorMsg", UpdateUserResult.SUCCESS.getMsg());
-        }
-        return result;
+        return 0;
     }
 
+    @Override
+    public int updateUserDuty(Duty duty, String userId){
+        //获取dutyId
+        List<String> dutyIds = userDutyMapper.selectByUserId(userId);
+        if(dutyIds.indexOf(duty.getDutyId()) == -1){
+            return -1;
+        }
+        if (dutyMapper.updateDutyById(duty) == 0) {
+            return -2;
+        }
+        return 0;
+    }
+
+    @Override
+    public int updateUserProject(Project project, String userId){
+        //获取proId
+        List<String> proIds = userProjectMapper.selectProIdByUserId(userId);
+        if(proIds.indexOf(project.getProId()) == -1){
+            return -1;
+        }
+        if (projectMapper.updateByPrimaryKeySelective(project) == 0) {
+            return -2;
+        }
+        return 0;
+    }
     @Override
     public int addUserDuty(UserDuty userDuty, Duty duty) {
         if (userDuty.getUserId() == null || userDuty.getDutyId() == null ||

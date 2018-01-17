@@ -458,4 +458,18 @@ public class Duty {
     public void setMonthIncome(Float monthIncome) {
         this.monthIncome = monthIncome;
     }
+
+    /**
+     * 检查是否可以更新
+     * @author wzy
+     * @return bool
+     */
+    public boolean isUpdatable(){
+        return !( this.skill == null && this.workYears == null &&
+        this.post == null && this.company == null &&
+        this.capacityRate == null &&  this.creditRate == null &&
+        this.rehireRate == null && this.checkRate == null &&
+        this.checkNum == null && this.proceedNum == null &&
+        this.userIncome == null && this.monthIncome == null);
+    }
 }
