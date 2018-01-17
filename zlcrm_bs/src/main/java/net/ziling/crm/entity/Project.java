@@ -225,4 +225,14 @@ public class Project {
     public void setProjectState(String projectState) {
         this.projectState = projectState == null ? null : projectState.trim();
     }
+
+    /**
+     * 检查是否可以更新
+     * @author wzy
+     * @return bool
+     */
+    public boolean isUpdatable(){
+        return !(this.projectIncome == null && this.projectName == null && this.projectPrice == null
+                && this.projectState == null && this.projectType == null);
+    }
 }
