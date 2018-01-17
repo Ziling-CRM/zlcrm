@@ -1,11 +1,9 @@
 package net.ziling.crm.service;
 
-import com.sun.xml.internal.rngom.parse.host.Base;
-import net.ziling.crm.entity.BaseUser;
-import net.ziling.crm.entity.Domain;
-import net.ziling.crm.entity.Role;
-
+import javafx.util.Pair;
+import net.ziling.crm.entity.*;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Description:
@@ -54,15 +52,68 @@ public interface UserService {
     /**
      * 根据userId更新用户信息
      * @param user,permission
-     * @return success number 0 / 1
+     * @return success 0 / 1
      */
     public int updateByUserId(BaseUser user, String permission);
 
     /**
      * 根据userId删除所有user
      * @param baseUserId
-     * @return success number 0 / 1
+     * @return success 0 / 1
      */
     public int deleteByUserId(String baseUserId);
+
+    /**
+     * 根据用户的userId获取用户的信息
+     * @param userId
+     * @return
+     */
+    public Map<String, Object> getUserByUserId(String userId);
+
+    /**
+     * 添加客户信息
+     * @param baseUser
+     * @return
+     */
+    public int addBaseUser(BaseUser baseUser) throws Exception;
+
+    /**
+     * 修改客户信息，可选user，project以及duty
+     * @param user
+     * @param project
+     * @param duty
+     * @return
+     */
+    public Map<String, Object> updateUserInf(BaseUser user, Project project, Duty duty);
+
+   /**
+     * 添加用户的职责信息，其中包括用户和职责的关联表，和职责的信息表
+     * @param userDuty
+     * @param duty
+     * @return 返回为0则表示成功，非零均为有误，1表示UserDuty的插入有误，2表示Duty的插入有误 , 3表示数据为空
+     */
+    public int addUserDuty(UserDuty userDuty, Duty duty);
+
+    /**
+     * 添加用户的项目信息，其中包括用户的项目信息，和用户项目的关联表的信息
+     * @param userProject
+     * @param project
+     * @return  返回为0则表示成功，非零均为有误，1表示UserProject的插入有误，2表示Project的插入有误 , 3表示数据为空
+     */
+    public int addUserProject(UserProject userProject, Project project);
+
+    /**
+     * 通过搜索条件进行用户的信息检索
+     * @param limits 限制的条件的Map集合
+     * @return 所有满足条件的用户的集合
+     */
+    public List<BaseUser> getAllSelectedUser(Map<String, String> limits);
+
+    /**
+     * 通过userId判断用户是否存在
+     * @param userId
+     * @return
+     */
+    public BaseUser judgeUserExist(String userId);
 
 }

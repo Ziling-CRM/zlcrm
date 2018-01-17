@@ -1,17 +1,15 @@
 package net.ziling.crm.controller;
 
 import net.ziling.crm.common.util.AdminResultVo;
-import net.ziling.crm.common.util.ArgumentsValidator;
-import net.ziling.crm.common.util.ResultVo;
 import net.ziling.crm.common.util.UUIDTools;
-import net.ziling.crm.common.wrap.AddResult;
-import net.ziling.crm.common.wrap.LoginResult;
-import net.ziling.crm.common.wrap.UserPermision;
-import net.ziling.crm.dao.BaseUserMapper;
-import net.ziling.crm.entity.BaseUser;
-import net.ziling.crm.entity.Role;
-import net.ziling.crm.entity.wrap.BaseUserWrap;
+import net.ziling.crm.common.wrap.GetUserResult;
+import net.ziling.crm.common.wrap.UpdateUserResult;
+import net.ziling.crm.entity.*;
 import net.ziling.crm.service.UserService;
+import net.ziling.crm.common.util.ResultVo;
+import net.ziling.crm.common.wrap.AddResult;
+
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,287 +17,344 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Description:
- * 前端控制器
+ * 用户相关的前端控制器
  *
  * @author huaxin
- * @create 2018/01/08 19:54
+ * @create 2018/01/12 15:27
  */
 @Controller
 @RequestMapping("/user")
 public class UserController {
 
-    private final static String PRE_STR_OF_USERID = "a";
-
     @Autowired
     UserService userService;
 
-    @RequestMapping("/login")
+    @RequestMapping("/addUserBase")
     @ResponseBody
-    public AdminResultVo login(String username, String password, HttpSession session, HttpServletRequest request) {
-        AdminResultVo resultVo = new AdminResultVo();
-        BaseUser user = null;
-
-        //验证登录参数不能为空
-        if (ArgumentsValidator.checkUsernameAndPasswordNotNull(username, password)) {
-            user = userService.loginByUsernameAndPassword(username, password);
-        }
-        //如果登录失败，设置状态码，然后返回
-        if (user == null) {
-            resultVo.setCode(LoginResult.USER_NOT_EXIST.getValue());
-            resultVo.setMsg(LoginResult.USER_NOT_EXIST.getMsg());
-            return resultVo;
-        }
-
-        //用户的密码错误
-        if (user.getPassword() == null) {
-            resultVo.setCode(LoginResult.PASSWORD_ERROR.getValue());
-            resultVo.setMsg(LoginResult.PASSWORD_ERROR.getMsg());
-            return resultVo;
-        }
-
-        //用户状态判断
-        //end 用户状态判断
-
-        //获取当前登录的管理员的权限
-        Role role = userService.getUserRole(user.getUserId());
-        resultVo.setAdminDatas("permission", role.getRoleId());
-
-        session.setAttribute("user", user);
-
-        //登录成功之后的封装的参数
-        resultVo.setCode(LoginResult.SUCCESS.getValue());
-        resultVo.setMsg(LoginResult.SUCCESS.getMsg());
-        resultVo.setAdminDatas("userId", user.getUserId());
-        resultVo.setAdminDatas("username", user.getUsername());
-
-        return resultVo;
-    }
-
-    @RequestMapping("/addAdmin")
-    @ResponseBody
-    public ResultVo addAdmin(String userId, String username, String password, String permission, HttpSession session, HttpServletRequest request) {
+    public ResultVo addUserBase(String userId, String realname, String gender, String telephone,
+                                String qq, String email, String creditCard, String creditAddress,
+                                String alipay, String address, HttpSession session, HttpServletRequest request) {
         ResultVo resultVo = new ResultVo();
-        BaseUser user ;
+        BaseUser user = new BaseUser();
 
-        //验证登录参数不能为空
-        if (!ArgumentsValidator.checkUsernameAndPasswordNotNull(username, password)) {
-            resultVo.setStatus_code(AddResult.FIELD_NULL.getValue());
-            resultVo.setMsg(AddResult.FIELD_NULL.getMsg());
+        System.out.println("userId:"+userId+"  realname:" + realname);
+
+        //此处需要验证当前session中的登录状态的权限
+
+        //end
+
+        //验证userId的有效性
+        //1、userId不能为空
+        if (userId == null || userId.trim().length() <= 0) {
+            resultVo.setCode(AddResult.FIELD_NULL.getValue());
+            resultVo.setMsg(AddResult.FIELD_NULL.getMsg()+":userId不能为空");
             return resultVo;
         }
-
+        //2、新增加的userId即表示为工号不能在数据库中存在
         //验证用户名不能重复
-        if (userService.getUserByUsername(username) != null) {
-            resultVo.setStatus_code(AddResult.DOUBLE_USERNAME.getValue());
+        if (userService.judgeUserExist(userId) != null) {
+            resultVo.setCode(AddResult.DOUBLE_USERNAME.getValue());
             resultVo.setMsg(AddResult.DOUBLE_USERNAME.getMsg());
             return resultVo;
         }
 
-        if (userId == null) {
-            userId = UUIDTools.getUUIDByTime_M();
-        }
-
+        //封装用户信息
+        user.setUserId(userId);
+        user.setRealname(realname);
+        user.setGender(gender);
+        user.setTelephone(telephone);
+        user.setEmail(email);
+        user.setQq(qq);
+        user.setCreditcard(creditCard);
+        user.setCreditaddress(creditAddress);
+        user.setAlipay(alipay);
+        user.setAddress(address);
         try {
-            Integer.parseInt(userId);
+            userService.addBaseUser(user);
         }catch (Exception e) {
             e.printStackTrace();
-            resultVo.setStatus_code(AddResult.USERID_NOT_NUMBER.getValue());
-            resultVo.setMsg(AddResult.USERID_NOT_NUMBER.getMsg());
-            return resultVo;
-        }
-
-        userId = PRE_STR_OF_USERID + userId;
-
-        //添加管理员用户信息
-        user = new BaseUser(userId, username, password);
-
-        Role role = new Role();
-        role.setRoleId(permission);
-        if (userService.addAdminUserAndRole(user, role) < 0) {
-            resultVo.setStatus_code(AddResult.FAILED_IN_INSERT.getValue());
+            resultVo.setCode(AddResult.FAILED_IN_INSERT.getValue());
             resultVo.setMsg(AddResult.FAILED_IN_INSERT.getMsg());
             return resultVo;
         }
-
-        resultVo.setStatus_code(AddResult.SUCCESS.getValue());
-        resultVo.setMsg(AddResult.SUCCESS.getMsg());
-        resultVo.setData(user);
-        return resultVo;
-    }
-
-    @RequestMapping("/getAdmin")
-    @ResponseBody
-    public AdminResultVo getAdmin(String username, HttpSession session, HttpServletRequest request) {
-        AdminResultVo resultVo = new AdminResultVo();
-        BaseUser adminUser = null;
-
-        //验证参数的信息是否不为空
-        if (username == null || username.trim().length() <= 0) {
-            resultVo.setCode(AddResult.FIELD_NULL.getValue());
-            resultVo.setMsg(AddResult.FIELD_NULL.getMsg());
-            return  resultVo;
-        }
-
-        //这个地方的带有状态筛选，OFF为用户被删除状态， ON为用户正常在线的状态
-        adminUser = userService.getUserByUsername(username);
-
-        //如果没有找到该管理员用户的话
-        if (adminUser == null || adminUser.getUsername() ==null || adminUser.getUsername().trim().length() <=0) {
-            resultVo.setCode(LoginResult.USER_NOT_EXIST.getValue());
-            resultVo.setMsg(LoginResult.USER_NOT_EXIST.getMsg());
-            return  resultVo;
-        }
-
-        //获取该管理员用户的权限信息
-        Role role = userService.getUserRole(adminUser.getUserId());
-
         resultVo.setCode(AddResult.SUCCESS.getValue());
         resultVo.setMsg(AddResult.SUCCESS.getMsg());
-        resultVo.setAdminDatas("userId", adminUser.getUserId());
-        resultVo.setAdminDatas("username", adminUser.getUsername());
-        resultVo.setAdminDatas("password", adminUser.getPassword());
-        resultVo.setAdminDatas("permission", role.getRoleId());
+        return resultVo;
+    }
+
+    @RequestMapping("/addUserDuty")
+    @ResponseBody
+    public ResultVo addUserDuty(String userId, String skill, String workYears, String post,
+                                String company, String capacityRate, String creditRate, String rehireRate,
+                                String checkRate, String checkNum, String proceedNum, String userIncome,
+                                String monthIncome, HttpSession session, HttpServletRequest request) {
+        ResultVo resultVo = new ResultVo();
+        UserDuty userDuty = new UserDuty();
+        Duty duty = new Duty();
+
+        //首先进行当前管理员用户权限的检验
+        // end 管理员权限的检验
+
+        //验证userId的有效性
+        //1、userId不能为空
+        if (userId == null || userId.trim().length() <= 0) {
+            resultVo.setCode(AddResult.FIELD_NULL.getValue());
+            resultVo.setMsg(AddResult.FIELD_NULL.getMsg()+":userId不能为空");
+            return resultVo;
+        }
+        //2、新增加的userId即表示为工号不能在数据库中存在
+        //验证用户名必须先存在
+        if (userService.judgeUserExist(userId) == null) {
+            resultVo.setCode(AddResult.USER_NOT_FIND.getValue());
+            resultVo.setMsg(AddResult.USER_NOT_FIND.getMsg());
+            return resultVo;
+        }
+
+        //封装用户的职责信息
+        duty.setDutyId(UUIDTools.getUUIDByTime_M());
+        duty.setSkill(skill);
+        duty.setWorkYears(workYears);
+        duty.setPost(post);
+        duty.setCompany(company);
+        duty.setCapacityRate(capacityRate);
+        duty.setCreditRate(creditRate);
+        duty.setRehireRate(rehireRate);
+        duty.setCheckRate(checkRate);
+        //验证数字参数的正确性
+        int cn;  int pn; float ui; float mi;
+        try {
+            cn = Integer.parseInt(checkNum);
+            pn = Integer.parseInt(proceedNum);
+            ui = Float.parseFloat(userIncome);
+            mi = Float.parseFloat(monthIncome);
+        }catch (Exception e) {
+            e.printStackTrace();
+            resultVo.setCode(AddResult.FIELD_NULL.getValue());
+            resultVo.setMsg(AddResult.FIELD_NULL.getMsg()+", 只能为数字的字段中包含了非数字值");
+            return resultVo;
+        }
+        duty.setCheckNum(cn);
+        duty.setProceedNum(pn);
+        duty.setUserIncome(ui);
+        duty.setMonthIncome(mi);
+        //封装用户职责表中的数据
+        userDuty.setUserId(userId);
+        userDuty.setDutyId(duty.getDutyId());
+        // end 封装用户的职责信息
+
+        //写入数据到职责表,写入数据到用户职责表进行用户和职责的关联操作
+        switch (userService.addUserDuty(userDuty, duty)) {
+            case 0: {
+                resultVo.setCode(AddResult.SUCCESS.getValue());
+                resultVo.setMsg(AddResult.SUCCESS.getMsg());
+            }
+                break;
+            case 1: {
+                resultVo.setCode(AddResult.FAILED_IN_INSERT.getValue());
+                resultVo.setMsg(AddResult.SUCCESS.getMsg()+"，UserDuty的插入有误");
+            }
+                break;
+            case 2: {
+                resultVo.setCode(AddResult.FAILED_IN_INSERT.getValue());
+                resultVo.setMsg(AddResult.SUCCESS.getMsg()+"，Duty的插入有误");
+            }
+                break;
+            case 3: {
+                resultVo.setCode(AddResult.FIELD_NULL.getValue());
+                resultVo.setMsg(AddResult.FIELD_NULL.getMsg());
+            }
+                break;
+            default: {
+                resultVo.setCode(-1);
+                resultVo.setMsg("不明错误，非法操作");
+            }
+
+        }
+        return resultVo;
+    }
+
+    @RequestMapping("/addUserProject")
+    @ResponseBody
+    public ResultVo addUserProject(String userId, String projectName, String projectType, String projectPrice,
+                                String projectIncome, String projectState, HttpSession session, HttpServletRequest request) {
+        ResultVo resultVo = new ResultVo();
+        UserProject userProject = new UserProject();
+        Project project = new Project();
+
+        //首先进行当前管理员用户权限的检验
+        // end 管理员权限的检验
+
+        //验证userId的有效性
+        //1、userId不能为空
+        if (userId == null || userId.trim().length() <= 0) {
+            resultVo.setCode(AddResult.FIELD_NULL.getValue());
+            resultVo.setMsg(AddResult.FIELD_NULL.getMsg()+":userId不能为空");
+            return resultVo;
+        }
+        //2、新增加的userId即表示为工号不能在数据库中存在
+        //验证用户名必须先存在
+        if (userService.judgeUserExist(userId) == null) {
+            resultVo.setCode(AddResult.USER_NOT_FIND.getValue());
+            resultVo.setMsg(AddResult.USER_NOT_FIND.getMsg());
+            return resultVo;
+        }
+
+        //开始封装用户的项目信息
+        project.setProId(UUIDTools.getUUIDByTime_M());
+        project.setProjectName(projectName);
+        project.setProjectType(projectType);
+        project.setProjectPrice(projectPrice);
+        project.setProjectIncome(projectIncome);
+        project.setProjectState(projectState);
+        userProject.setUserId(userId);
+        userProject.setProId(project.getProId());
+        // end 封装用户的项目信息
+
+        //写入数据到项目表,写入数据到用户项目表进行用户和职责的关联操作
+        switch (userService.addUserProject(userProject, project)) {
+            case 0: {
+                resultVo.setCode(AddResult.SUCCESS.getValue());
+                resultVo.setMsg(AddResult.SUCCESS.getMsg());
+            }
+            break;
+            case 1: {
+                resultVo.setCode(AddResult.FAILED_IN_INSERT.getValue());
+                resultVo.setMsg(AddResult.SUCCESS.getMsg()+"，UserProject的插入有误");
+            }
+            break;
+            case 2: {
+                resultVo.setCode(AddResult.FAILED_IN_INSERT.getValue());
+                resultVo.setMsg(AddResult.SUCCESS.getMsg()+"，Project的插入有误");
+            }
+            break;
+            case 3: {
+                resultVo.setCode(AddResult.FIELD_NULL.getValue());
+                resultVo.setMsg(AddResult.FIELD_NULL.getMsg());
+            }
+            break;
+            default: {
+                resultVo.setCode(-1);
+                resultVo.setMsg("不明错误，非法操作");
+            }
+        }
 
         return resultVo;
     }
 
-    @RequestMapping("/listAllAdmin")
+    @RequestMapping("/listAllUser")
     @ResponseBody
-    public AdminResultVo listAllAdmin(String username, HttpSession session, HttpServletRequest request) {
-        AdminResultVo resultVo = new AdminResultVo();
-        BaseUser user = null;
+    public ResultVo listAllUser(String userId, String duty, String realname, HttpSession session, HttpServletRequest request) {
+        ResultVo resultVo = new ResultVo();
+        Map<String , String> limits = new HashMap<>();
+        Map<String , List<BaseUser>> resultDate = new HashMap<>();
+        List<BaseUser> userList;
 
-        //验证参数
-        if (username == null || username.trim().length() <=0 ) {
-            resultVo.setCode(AddResult.FIELD_NULL.getValue());
-            resultVo.setMsg(AddResult.FIELD_NULL.getMsg());
-            return resultVo;
-        }
+        //首先进行当前管理员用户权限的检验
+        // end 管理员权限的检验
 
-        //获取username对应的管理员用户的信息
-        user = userService.getUserByUsername(username);
-
-        //获取当前登录的管理员的权限
-        Role role = userService.getUserRole(user.getUserId());
-        if (!role.getRoleId().equals("*")) {
-            resultVo.setCode(AddResult.NOT_PERMISSION.getValue());
-            resultVo.setMsg(AddResult.NOT_PERMISSION.getMsg());
-            return resultVo;
-        }
-
-        List<BaseUserWrap> adminListsWrap = new ArrayList<>();
-        List<BaseUser> adminLists;
-        //如果是超级管理员，获取所有的一般管理员信息
-        adminLists = userService.getAllAdmin();
-        BaseUserWrap baseUserWrap = new BaseUserWrap();
-        Role adminRole;
-        //获取每个管理员信息的权限
-        for (BaseUser baseUser : adminLists) {
-            System.out.println(baseUser);
-            baseUserWrap.setUserId(baseUser.getUserId());
-            baseUserWrap.setPassword(baseUser.getPassword());
-            baseUserWrap.setStatus(baseUser.getStatus());
-            baseUserWrap.setUsername(baseUser.getUsername());
-            baseUserWrap.setAddress(baseUser.getAddress());
-            baseUserWrap.setEmail(baseUser.getEmail());
-            baseUserWrap.setRealname(baseUser.getRealname());
-            baseUserWrap.setTelephone(baseUser.getTelephone());
-
-            adminRole = userService.getUserRole(baseUser.getUserId());
-
-            baseUserWrap.setPermission(adminRole.getRoleId());
-
-            System.out.println("baseUserWrap:"+baseUserWrap);
-            adminListsWrap.add(baseUserWrap);
-            baseUserWrap = new BaseUserWrap();
-        }
-
-        resultVo.setAdminDatas("adminLists", adminListsWrap);
+        userList = userService.getAllSelectedUser(limits);
         resultVo.setCode(AddResult.SUCCESS.getValue());
         resultVo.setMsg(AddResult.SUCCESS.getMsg());
+        resultDate.put("userList", userList);
+        resultVo.setData(resultDate);
 
         return resultVo;
     }
 
-    /**
-     * 管理员信息修改
-     * @author wzy
-     */
-    @RequestMapping("/updateAdmin")
+    @RequestMapping("/getUser")
     @ResponseBody
-    public AdminResultVo updateAdmin(String userId, String username, String password, String permission,
-                                     HttpSession session, HttpServletRequest request) {
+    public  AdminResultVo getUser(String userId, HttpSession session, HttpServletRequest request){
         AdminResultVo resultVo = new AdminResultVo();
-        BaseUser user = null;
-        int permissionI = 0;
+        //TODO:权限
 
-        //Todo:用户状态与权限判断
-
-        //参数完整性
-        if(userId == null || username == null || password == null || permission == null){
-            resultVo.setCode(1);
-            resultVo.setMsg("Parameters wrong.");
+        if(userId == null){
+            resultVo.setCode(GetUserResult.LACK_OF_PARAMETERS.getValue());
+            resultVo.setMsg("缺少参数");
             return resultVo;
         }
 
-        //Todo:字符转义?
-        //permission整数
-        try{
-            permissionI = Integer.valueOf(permission);
-        }catch(Exception e){
-            resultVo.setCode(2);
-            resultVo.setMsg("Parameters wrong.");
-            return resultVo;
-        }
-        //permission check
-        if(permissionI > 3 || permissionI < 0){
-            resultVo.setCode(3);
-            resultVo.setMsg("Parameters wrong.");
+        Map<String, Object> userResult = userService.getUserByUserId(userId);
+        resultVo.setCode(Integer.parseInt(userResult.get("Error").toString()));
+        resultVo.setMsg(userResult.get("ErrorMsg").toString());
+
+        if(Integer.parseInt(userResult.get("Error").toString()) != GetUserResult.SUCCESS.getValue()){
             return resultVo;
         }
 
-        //按管理员Id更新管理员的userName,password,permission
-        user = new BaseUser();
-        user.setUserId(userId);
-        user.setPassword(password);
-        user.setUsername(username);
+        BaseUser user = (BaseUser)(userResult.get("User"));
+        List<Duty> duties = (List<Duty>)(userResult.get("Duties"));
+        List<Project> projects = (List<Project>)(userResult.get("Projects"));
 
-        int successNum = userService.updateByUserId(user, permission);
+        resultVo.setAdminDatas("baseUser", user);
+        resultVo.setAdminDatas("duty", duties);
 
-        if(successNum > 0){
-            resultVo.setCode(0);
-            resultVo.setAdminDatas("username",username);
-            resultVo.setAdminDatas("password",password);
-            resultVo.setAdminDatas("permission", permission);
-        }else{
-            resultVo.setCode(4);
-            resultVo.setMsg("Failed.");
-        }
+        resultVo.setAdminDatas("projectsList",projects);
         return resultVo;
     }
 
-    /**
-     * 管理员信息删除
-     * @author wzy
-     */
-    @RequestMapping("/deleteAdmin")
+    @RequestMapping("/updateUser")
     @ResponseBody
-    public AdminResultVo deleteAdmin(String userId, HttpSession session, HttpServletRequest request){
-        //Todo:用户状态与权限判断
+    public AdminResultVo updateUser(HttpSession session, HttpServletRequest request) throws Exception{
         AdminResultVo resultVo = new AdminResultVo();
-        int successNum = userService.deleteByUserId(userId);
-        if(successNum == 0){
+        BaseUser user = new BaseUser();
+        Duty duty = new Duty();
+        Project project = new Project();
+        Map params = request.getParameterMap();
+
+        //验证用户Id是否合法
+        if(params.get("userId") == null){
+            resultVo.setCode(UpdateUserResult.LACK_OF_USERID.getValue());
+            resultVo.setMsg(UpdateUserResult.LACK_OF_USERID.getMsg());
+            return resultVo;
+        }
+        //验证数字
+        try {
+            if (params.get("monthIncome") != null) {
+                Float.parseFloat(params.get("monthIncome").toString());
+            }
+            if (params.get("userIncome") != null){
+                Float.parseFloat(params.get("userIncome").toString());
+            }
+            if(params.get("proceedNum") != null){
+                Integer.parseInt(params.get("proceedNum").toString());
+            }
+            if(params.get("checkNum") != null){
+                Integer.parseInt(params.get("checkNum").toString());
+            }
+        }catch (Exception e){
+            resultVo.setCode(UpdateUserResult.PARAMETER_NOT_VALID.getValue());
+            resultVo.setMsg(UpdateUserResult.PARAMETER_NOT_VALID.getMsg());
+            return resultVo;
+        }
+        BeanUtils.populate(user, params);
+        BeanUtils.populate(duty, params);
+        BeanUtils.populate(project, params);
+
+        Map<String, Object> res = userService.updateUserInf(user,project,duty);
+        resultVo.setCode(Integer.parseInt(res.get("Error").toString()));
+        resultVo.setMsg(res.get("ErrorMsg").toString());
+        return resultVo;
+    }
+
+    @RequestMapping("/deleteUser")
+    @ResponseBody
+    public AdminResultVo deleteUser(String userId, HttpSession session, HttpServletRequest request){
+        AdminResultVo resultVo = new AdminResultVo();
+
+        if(userService.deleteByUserId(userId) == 0){
             resultVo.setCode(1);
-            resultVo.setAdminDatas("Message ","Failed.");
+            resultVo.setMsg("用户不存在");
         }else{
             resultVo.setCode(0);
-            resultVo.setAdminDatas("Message","Success.");
+            resultVo.setMsg("删除成功");
         }
+
         return resultVo;
     }
 }
