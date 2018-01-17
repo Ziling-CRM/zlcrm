@@ -305,9 +305,9 @@ public class UserController {
         return resultVo;
     }
 
-    @RequestMapping("/updateUser")
+    @RequestMapping("/updateUserBase")
     @ResponseBody
-    public AdminResultVo updateUser(HttpSession session, HttpServletRequest request) throws Exception{
+    public AdminResultVo updateUserBase(HttpSession session, HttpServletRequest request) throws Exception{
         AdminResultVo resultVo = new AdminResultVo();
         BaseUser user = new BaseUser();
         Map params = request.getParameterMap();
@@ -333,9 +333,9 @@ public class UserController {
         return resultVo;
     }
 
-    @RequestMapping("/updateDuty")
+    @RequestMapping("/updateUserDuty")
     @ResponseBody
-    public AdminResultVo updateDuty(String userId, String monthIncome, String userIncome,
+    public AdminResultVo updateUserDuty(String userId, String monthIncome, String userIncome,
                                     String checkNum, String proceedNum, HttpSession session,
                                     HttpServletRequest request)throws Exception{
         AdminResultVo resultVo = new AdminResultVo();
@@ -399,9 +399,9 @@ public class UserController {
         return resultVo;
     }
 
-    @RequestMapping("/updateProject")
+    @RequestMapping("/updateUserProject")
     @ResponseBody
-    public AdminResultVo updateProject(String userId, HttpSession session, HttpServletRequest request)throws Exception{
+    public AdminResultVo updateUserProject(String userId, HttpSession session, HttpServletRequest request)throws Exception{
         AdminResultVo resultVo = new AdminResultVo();
         Project project = new Project();
         Map params = request.getParameterMap();
