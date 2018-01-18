@@ -100,11 +100,34 @@ public class UserServiceImpl implements UserService {
             return -2;
         }
         try {
-            UserRole userRole = new UserRole();
-            userRole.setId(UUIDTools.getUUIDId());
-            userRole.setRoleId(role.getRoleId());
-            userRole.setUserId(user.getUserId());
-            userRoleMapper.insertSelective(userRole);
+            /**
+             * 说明：
+             * 1、每个用户只能有一个role信息
+             * 此处添加管理员用户的方式，首先是将BaseUser的信息写入到数据表中
+             * 然后，根据userId在user_role表中查找，如果找到了相应用户的的角色信息
+             * 这说明已经添加过了，此时只需要修改相关的role_id即可
+             */
+             UserRole userRole = userRoleMapper.getUserRoleByUserId(user.getUserId());
+             if (userRole == null) {
+                 userRole = new UserRole();
+                 userRole.setId(UUIDTools.getUUIDId());
+                 userRole.setUserId(user.getUserId());
+                 userRole.setRoleId(role.getRoleId());
+                 userRoleMapper.insertSelective(userRole);
+             }
+             userRole.setRoleId(role.getRoleId());
+             userRoleMapper.updateByPrimaryKeySelective(userRole);
+
+            /**
+             * 说明：
+             * 2、每个用户可以有多个role信息
+             * 即每次添加的时候直接添加role即可
+             */
+//            UserRole userRole = new UserRole();
+//            userRole.setId(UUIDTools.getUUIDId());
+//            userRole.setRoleId(role.getRoleId());
+//            userRole.setUserId(user.getUserId());
+//            userRoleMapper.insertSelective(userRole);
         } catch (Exception e) {
             e.printStackTrace();
             return -2;

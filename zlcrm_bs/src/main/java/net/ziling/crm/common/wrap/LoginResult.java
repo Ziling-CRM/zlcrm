@@ -12,7 +12,8 @@ public enum LoginResult {
     SUCCESS(0, "登录成功"),
     USER_NOT_EXIST(1, "找不到该用户"),
     PASSWORD_ERROR(2, "密码错误"),
-    USER_LOCKED(3, "用户被锁定");
+    USER_LOCKED(3, "用户被锁定"),
+    USER_NOT_LOGIN(4, "用户没有登录");
 
     private int value;
     private String msg;

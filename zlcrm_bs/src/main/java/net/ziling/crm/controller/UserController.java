@@ -2,12 +2,10 @@ package net.ziling.crm.controller;
 
 import net.ziling.crm.common.util.AdminResultVo;
 import net.ziling.crm.common.util.UUIDTools;
-import net.ziling.crm.common.wrap.GetUserResult;
-import net.ziling.crm.common.wrap.UpdateUserResult;
+import net.ziling.crm.common.wrap.*;
 import net.ziling.crm.entity.*;
 import net.ziling.crm.service.UserService;
 import net.ziling.crm.common.util.ResultVo;
-import net.ziling.crm.common.wrap.AddResult;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,9 +43,20 @@ public class UserController {
 
         System.out.println("userId:"+userId+"  realname:" + realname);
 
-        //此处需要验证当前session中的登录状态的权限
-
-        //end
+        // 验证当前登录的管理员的权限
+        BaseUser adminUser = (BaseUser)session.getAttribute("loginAdminUser");
+        if (adminUser == null) {
+            resultVo.setCode(LoginResult.USER_NOT_LOGIN.getValue());
+            resultVo.setMsg(LoginResult.USER_NOT_LOGIN.getMsg());
+            return resultVo;
+        }
+        Role role = (Role)session.getAttribute("role");
+        if (Integer.parseInt(role.getRoleId()) > Integer.parseInt(UserPermision.NOTDELETEORUPDATE.getValue())) {
+            resultVo.setCode(AddResult.NOT_PERMISSION.getValue());
+            resultVo.setMsg(AddResult.NOT_PERMISSION.getMsg());
+            return resultVo;
+        }
+        // end 验证当前登录的管理员的权限
 
         //验证userId的有效性
         //1、userId不能为空
@@ -98,8 +107,20 @@ public class UserController {
         UserDuty userDuty = new UserDuty();
         Duty duty = new Duty();
 
-        //首先进行当前管理员用户权限的检验
-        // end 管理员权限的检验
+        // 验证当前登录的管理员的权限
+        BaseUser adminUser = (BaseUser)session.getAttribute("loginAdminUser");
+        if (adminUser == null) {
+            resultVo.setCode(LoginResult.USER_NOT_LOGIN.getValue());
+            resultVo.setMsg(LoginResult.USER_NOT_LOGIN.getMsg());
+            return resultVo;
+        }
+        Role role = (Role)session.getAttribute("role");
+        if (Integer.parseInt(role.getRoleId()) > Integer.parseInt(UserPermision.NOTDELETEORUPDATE.getValue())) {
+            resultVo.setCode(AddResult.NOT_PERMISSION.getValue());
+            resultVo.setMsg(AddResult.NOT_PERMISSION.getMsg());
+            return resultVo;
+        }
+        // end 验证当前登录的管理员的权限
 
         //验证userId的有效性
         //1、userId不能为空
@@ -187,8 +208,20 @@ public class UserController {
         UserProject userProject = new UserProject();
         Project project = new Project();
 
-        //首先进行当前管理员用户权限的检验
-        // end 管理员权限的检验
+        // 验证当前登录的管理员的权限
+        BaseUser adminUser = (BaseUser)session.getAttribute("loginAdminUser");
+        if (adminUser == null) {
+            resultVo.setCode(LoginResult.USER_NOT_LOGIN.getValue());
+            resultVo.setMsg(LoginResult.USER_NOT_LOGIN.getMsg());
+            return resultVo;
+        }
+        Role role = (Role)session.getAttribute("role");
+        if (Integer.parseInt(role.getRoleId()) > Integer.parseInt(UserPermision.NOTDELETEORUPDATE.getValue())) {
+            resultVo.setCode(AddResult.NOT_PERMISSION.getValue());
+            resultVo.setMsg(AddResult.NOT_PERMISSION.getMsg());
+            return resultVo;
+        }
+        // end 验证当前登录的管理员的权限
 
         //验证userId的有效性
         //1、userId不能为空
@@ -255,10 +288,20 @@ public class UserController {
         Map<String , List<BaseUser>> resultDate = new HashMap<>();
         List<BaseUser> userList;
 
-        //首先进行当前管理员用户权限的检验
-        // end 管理员权限的检验
-
-
+        // 验证当前登录的管理员的权限
+        BaseUser loginAdminUser = (BaseUser)session.getAttribute("loginAdminUser");
+        if (loginAdminUser == null) {
+            resultVo.setCode(LoginResult.USER_NOT_LOGIN.getValue());
+            resultVo.setMsg(LoginResult.USER_NOT_LOGIN.getMsg());
+            return resultVo;
+        }
+        Role loginAdminUserRole = (Role)session.getAttribute("role");
+        if (Integer.parseInt(loginAdminUserRole.getRoleId()) > Integer.parseInt(UserPermision.ONLYSELECT.getValue())) {
+            resultVo.setCode(AddResult.NOT_PERMISSION.getValue());
+            resultVo.setMsg(AddResult.NOT_PERMISSION.getMsg());
+            return resultVo;
+        }
+        // end 验证当前登录的管理员的权限
 
         limits.put("userId",userId);
         limits.put("duty",duty);
@@ -279,6 +322,21 @@ public class UserController {
     public  AdminResultVo getUser(String userId, HttpSession session, HttpServletRequest request){
         AdminResultVo resultVo = new AdminResultVo();
         //TODO:权限
+
+        // 验证当前登录的管理员的权限
+        BaseUser loginAdminUser = (BaseUser)session.getAttribute("loginAdminUser");
+        if (loginAdminUser == null) {
+            resultVo.setCode(LoginResult.USER_NOT_LOGIN.getValue());
+            resultVo.setMsg(LoginResult.USER_NOT_LOGIN.getMsg());
+            return resultVo;
+        }
+        Role loginAdminUserRole = (Role)session.getAttribute("role");
+        if (Integer.parseInt(loginAdminUserRole.getRoleId()) > Integer.parseInt(UserPermision.ONLYSELECT.getValue())) {
+            resultVo.setCode(AddResult.NOT_PERMISSION.getValue());
+            resultVo.setMsg(AddResult.NOT_PERMISSION.getMsg());
+            return resultVo;
+        }
+        // end 验证当前登录的管理员的权限
 
         if(userId == null){
             resultVo.setCode(GetUserResult.LACK_OF_PARAMETERS.getValue());
@@ -311,6 +369,22 @@ public class UserController {
         AdminResultVo resultVo = new AdminResultVo();
         BaseUser user = new BaseUser();
         Map params = request.getParameterMap();
+
+        // 验证当前登录的管理员的权限
+        BaseUser loginAdminUser = (BaseUser)session.getAttribute("loginAdminUser");
+        if (loginAdminUser == null) {
+            resultVo.setCode(LoginResult.USER_NOT_LOGIN.getValue());
+            resultVo.setMsg(LoginResult.USER_NOT_LOGIN.getMsg());
+            return resultVo;
+        }
+        Role loginAdminUserRole = (Role)session.getAttribute("role");
+        if (Integer.parseInt(loginAdminUserRole.getRoleId()) > Integer.parseInt(UserPermision.NOTDELETE.getValue())) {
+            resultVo.setCode(AddResult.NOT_PERMISSION.getValue());
+            resultVo.setMsg(AddResult.NOT_PERMISSION.getMsg());
+            return resultVo;
+        }
+        // end 验证当前登录的管理员的权限
+
         //验证用户Id是否合法
         if(params.get("userId") == null){
             resultVo.setCode(UpdateUserResult.LACK_OF_USERID.getValue());
@@ -343,6 +417,21 @@ public class UserController {
         Map params = request.getParameterMap();
         BeanUtils.populate(duty, params);
         int res = 0;
+
+        // 验证当前登录的管理员的权限
+        BaseUser loginAdminUser = (BaseUser)session.getAttribute("loginAdminUser");
+        if (loginAdminUser == null) {
+            resultVo.setCode(LoginResult.USER_NOT_LOGIN.getValue());
+            resultVo.setMsg(LoginResult.USER_NOT_LOGIN.getMsg());
+            return resultVo;
+        }
+        Role loginAdminUserRole = (Role)session.getAttribute("role");
+        if (Integer.parseInt(loginAdminUserRole.getRoleId()) > Integer.parseInt(UserPermision.NOTDELETE.getValue())) {
+            resultVo.setCode(AddResult.NOT_PERMISSION.getValue());
+            resultVo.setMsg(AddResult.NOT_PERMISSION.getMsg());
+            return resultVo;
+        }
+        // end 验证当前登录的管理员的权限
 
         //验证用户Id是否合法
         if(params.get("userId") == null || params.get("dutyId") == null){
@@ -407,6 +496,22 @@ public class UserController {
         Map params = request.getParameterMap();
         BeanUtils.populate(project, params);
         int res = 0;
+
+        // 验证当前登录的管理员的权限
+        BaseUser loginAdminUser = (BaseUser)session.getAttribute("loginAdminUser");
+        if (loginAdminUser == null) {
+            resultVo.setCode(LoginResult.USER_NOT_LOGIN.getValue());
+            resultVo.setMsg(LoginResult.USER_NOT_LOGIN.getMsg());
+            return resultVo;
+        }
+        Role loginAdminUserRole = (Role)session.getAttribute("role");
+        if (Integer.parseInt(loginAdminUserRole.getRoleId()) > Integer.parseInt(UserPermision.NOTDELETE.getValue())) {
+            resultVo.setCode(AddResult.NOT_PERMISSION.getValue());
+            resultVo.setMsg(AddResult.NOT_PERMISSION.getMsg());
+            return resultVo;
+        }
+        // end 验证当前登录的管理员的权限
+
         //验证用户Id是否合法
         if(userId == null || params.get("proId") == null){
             resultVo.setCode(UpdateUserResult.LACK_OF_USERID.getValue());
@@ -438,6 +543,21 @@ public class UserController {
     @ResponseBody
     public AdminResultVo deleteUser(String userId, HttpSession session, HttpServletRequest request){
         AdminResultVo resultVo = new AdminResultVo();
+
+        // 验证当前登录的管理员的权限
+        BaseUser loginAdminUser = (BaseUser)session.getAttribute("loginAdminUser");
+        if (loginAdminUser == null) {
+            resultVo.setCode(LoginResult.USER_NOT_LOGIN.getValue());
+            resultVo.setMsg(LoginResult.USER_NOT_LOGIN.getMsg());
+            return resultVo;
+        }
+        Role loginAdminUserRole = (Role)session.getAttribute("role");
+        if (Integer.parseInt(loginAdminUserRole.getRoleId()) > Integer.parseInt(UserPermision.ALL.getValue())) {
+            resultVo.setCode(AddResult.NOT_PERMISSION.getValue());
+            resultVo.setMsg(AddResult.NOT_PERMISSION.getMsg());
+            return resultVo;
+        }
+        // end 验证当前登录的管理员的权限
 
         if(userService.deleteByUserId(userId) == 0){
             resultVo.setCode(1);

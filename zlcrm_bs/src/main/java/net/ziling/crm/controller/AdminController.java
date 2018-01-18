@@ -7,7 +7,6 @@ import net.ziling.crm.common.util.UUIDTools;
 import net.ziling.crm.common.wrap.AddResult;
 import net.ziling.crm.common.wrap.LoginResult;
 import net.ziling.crm.common.wrap.UserPermision;
-import net.ziling.crm.dao.BaseUserMapper;
 import net.ziling.crm.entity.BaseUser;
 import net.ziling.crm.entity.Role;
 import net.ziling.crm.entity.wrap.BaseUserWrap;
@@ -69,7 +68,8 @@ public class AdminController {
         Role role = userService.getUserRole(user.getUserId());
         resultVo.setAdminDatas("permission", role.getRoleId());
 
-        session.setAttribute("user", user);
+        session.setAttribute("loginAdminUser", user);
+        session.setAttribute("role", role);
 
         //登录成功之后的封装的参数
         resultVo.setCode(LoginResult.SUCCESS.getValue());
@@ -100,10 +100,27 @@ public class AdminController {
             return resultVo;
         }
 
+        // 验证当前登录的管理员的权限
+        BaseUser adminUser = (BaseUser)session.getAttribute("loginAdminUser");
+        if (adminUser == null) {
+            resultVo.setCode(LoginResult.USER_NOT_LOGIN.getValue());
+            resultVo.setMsg(LoginResult.USER_NOT_LOGIN.getMsg());
+            return resultVo;
+        }
+        Role role = (Role)session.getAttribute("role");
+        if (Integer.parseInt(role.getRoleId()) > Integer.parseInt(UserPermision.NOTDELETEORUPDATE.getValue())) {
+            resultVo.setCode(AddResult.NOT_PERMISSION.getValue());
+            resultVo.setMsg(AddResult.NOT_PERMISSION.getMsg());
+            return resultVo;
+        }
+        // end 验证当前登录的管理员的权限
+
+        // 如果没有输入userId则使用系统生成的userId
         if (userId == null) {
             userId = UUIDTools.getUUIDByTime_M();
         }
 
+        // 判断userId只能为普通的数字，里面不能包含字符
         try {
             Integer.parseInt(userId);
         }catch (Exception e) {
@@ -113,14 +130,15 @@ public class AdminController {
             return resultVo;
         }
 
+        // 加上前缀
         userId = PRE_STR_OF_USERID + userId;
 
         //添加管理员用户信息
         user = new BaseUser(userId, username, password);
 
-        Role role = new Role();
-        role.setRoleId(permission);
-        if (userService.addAdminUserAndRole(user, role) < 0) {
+        Role userRole = new Role();
+        userRole.setRoleId(permission);
+        if (userService.addAdminUserAndRole(user, userRole) < 0) {
             resultVo.setCode(AddResult.FAILED_IN_INSERT.getValue());
             resultVo.setMsg(AddResult.FAILED_IN_INSERT.getMsg());
             return resultVo;
@@ -144,6 +162,21 @@ public class AdminController {
             resultVo.setMsg(AddResult.FIELD_NULL.getMsg());
             return  resultVo;
         }
+
+        // 验证当前登录的管理员的权限
+        BaseUser loginAdminUser = (BaseUser)session.getAttribute("loginAdminUser");
+        if (loginAdminUser == null) {
+            resultVo.setCode(LoginResult.USER_NOT_LOGIN.getValue());
+            resultVo.setMsg(LoginResult.USER_NOT_LOGIN.getMsg());
+            return resultVo;
+        }
+        Role loginAdminUserRole = (Role)session.getAttribute("role");
+        if (Integer.parseInt(loginAdminUserRole.getRoleId()) > Integer.parseInt(UserPermision.ONLYSELECT.getValue())) {
+            resultVo.setCode(AddResult.NOT_PERMISSION.getValue());
+            resultVo.setMsg(AddResult.NOT_PERMISSION.getMsg());
+            return resultVo;
+        }
+        // end 验证当前登录的管理员的权限
 
         //这个地方的带有状态筛选，OFF为用户被删除状态， ON为用户正常在线的状态
         adminUser = userService.getUserByUsername(username);
@@ -263,6 +296,21 @@ public class AdminController {
             return resultVo;
         }
 
+        // 验证当前登录的管理员的权限
+        BaseUser loginAdminUser = (BaseUser)session.getAttribute("loginAdminUser");
+        if (loginAdminUser == null) {
+            resultVo.setCode(LoginResult.USER_NOT_LOGIN.getValue());
+            resultVo.setMsg(LoginResult.USER_NOT_LOGIN.getMsg());
+            return resultVo;
+        }
+        Role loginAdminUserRole = (Role)session.getAttribute("role");
+        if (Integer.parseInt(loginAdminUserRole.getRoleId()) > Integer.parseInt(UserPermision.NOTDELETE.getValue())) {
+            resultVo.setCode(AddResult.NOT_PERMISSION.getValue());
+            resultVo.setMsg(AddResult.NOT_PERMISSION.getMsg());
+            return resultVo;
+        }
+        // end 验证当前登录的管理员的权限
+
         //按管理员Id更新管理员的userName,password,permission
         user = new BaseUser();
         user.setUserId(userId);
@@ -299,6 +347,23 @@ public class AdminController {
     public AdminResultVo deleteAdmin(String userId, HttpSession session, HttpServletRequest request){
         //Todo:用户状态与权限判断
         AdminResultVo resultVo = new AdminResultVo();
+
+        // 验证当前登录的管理员的权限
+        BaseUser loginAdminUser = (BaseUser)session.getAttribute("loginAdminUser");
+        if (loginAdminUser == null) {
+            resultVo.setCode(LoginResult.USER_NOT_LOGIN.getValue());
+            resultVo.setMsg(LoginResult.USER_NOT_LOGIN.getMsg());
+            return resultVo;
+        }
+        Role loginAdminUserRole = (Role)session.getAttribute("role");
+        if (Integer.parseInt(loginAdminUserRole.getRoleId()) > Integer.parseInt(UserPermision.ALL.getValue())) {
+            resultVo.setCode(AddResult.NOT_PERMISSION.getValue());
+            resultVo.setMsg(AddResult.NOT_PERMISSION.getMsg());
+            return resultVo;
+        }
+        // end 验证当前登录的管理员的权限
+
+
         int successNum = userService.deleteByUserId(userId);
         if(successNum == 0){
             resultVo.setCode(1);

@@ -12,8 +12,8 @@ public enum UserPermision {
     SADMIN("*","超级管理员"),
     ALL("0", "所有权限"),
     NOTDELETE("1", "不能删除"),
-    NOTADDORUPDATE("2", "不能删除或者修改"),
-    NOTSELECT("3", "只能查看");
+    NOTDELETEORUPDATE("2", "不能删除或者修改"),
+    ONLYSELECT("3", "只能查看");
 
     private String value;
     private String msg;
