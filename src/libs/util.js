@@ -7,7 +7,7 @@ let util = {
 
 };
 util.title = function (title) {
-    title = title || 'iView admin';
+    title = '紫领CRM系统'
     window.document.title = title;
 };
 

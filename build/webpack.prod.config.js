@@ -76,7 +76,7 @@ module.exports = merge(webpackBaseConfig, {
             ]
         }),
         new HtmlWebpackPlugin({
-            title: 'iView admin v' + package.version,
+            title: '紫领CRM系统',
             favicon: './td_icon.ico',
             filename: '../index.html',
             template: './src/template/index.ejs',

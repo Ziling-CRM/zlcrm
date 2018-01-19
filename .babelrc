@@ -1,5 +1,10 @@
 {
-    "presets": ["env"],
-    "plugins": ["transform-runtime"],
-    "comments": false
+  "presets": [
+    "env"
+  ],
+  "plugins": [
+    "transform-runtime",
+    "transform-object-rest-spread"
+  ],
+  "comments": false
 }

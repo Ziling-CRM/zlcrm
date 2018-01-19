@@ -1,9 +1,11 @@
 import Cookies from 'js-cookie';
 
 const user = {
-    state: {},
+    state: {
+        adminLists: []
+    },
     mutations: {
-        logout (state, vm) {
+        logout(state, vm) {
             Cookies.remove('user');
             Cookies.remove('password');
             Cookies.remove('access');
@@ -19,6 +21,15 @@ const user = {
             if (theme) {
                 localStorage.theme = theme;
             }
+        },
+        setLoginUser(state, user) {
+            state.userId = user.userId
+            state.userName = user.userName
+            state.userpermission = user.permission
+        },
+        setadminLists (state, lists){
+            console.log(lists)
+            state.adminLists = lists
         }
     }
 };

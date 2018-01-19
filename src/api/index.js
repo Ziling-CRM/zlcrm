@@ -1,8 +1,10 @@
 import axios from 'axios';
 
+import user from './user'
+
 const client = function (options) {
     let instance = axios.create({
-        baseURL: '/apiv1',
+        baseURL: 'http://zling.net/apiv1',
         timeout: 30000,  // 超时
         responseType: 'json' // default
     })
@@ -17,10 +19,12 @@ const client = function (options) {
     })
 }
 
-const apiFactory = {}
+const apiFactory = {
+    ...user
+}
 
 export default (requestName, params = {}, data = {}) => client({
     url: apiFactory[requestName].url,
     method: apiFactory[requestName].type,
-    params: params
+    params: params,
 })
