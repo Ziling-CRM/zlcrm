@@ -1,6 +1,7 @@
 package net.ziling.crm.service;
 
 import javafx.util.Pair;
+import net.ziling.crm.common.wrap.DeleteResult;
 import net.ziling.crm.entity.*;
 import java.util.List;
 import java.util.Map;
@@ -116,4 +117,10 @@ public interface UserService {
      */
     public BaseUser judgeUserExist(String userId);
 
+    /**
+     *  根据userId及其对应的proId删除项目
+     * @param userId
+     * @param proId
+     */
+    public DeleteResult deleteProject(String userId, String proId);
 }
