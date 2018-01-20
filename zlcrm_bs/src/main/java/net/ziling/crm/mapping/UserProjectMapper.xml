@@ -111,4 +111,9 @@
     from user_pro
     where user_id = #{userId, jdbcType=VARCHAR}
   </select>
+
+  <select id="selectByProIdAndUserId" resultMap="BaseResultMap" >
+      select user_id, pro_id, 'desc'
+      from user_pro where user_id = #{userId, jdbcType=VARCHAR}  and pro_id = #{proId, jdbcType=VARCHAR}
+  </select>
 </mapper>

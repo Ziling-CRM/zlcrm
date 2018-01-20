@@ -8,6 +8,7 @@ import net.ziling.crm.service.UserService;
 import net.ziling.crm.common.util.ResultVo;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -567,6 +568,33 @@ public class UserController {
             resultVo.setMsg("删除成功");
         }
 
+        return resultVo;
+    }
+
+    @RequestMapping("/deleteUserProject")
+    @ResponseBody
+    public AdminResultVo deleteProject(String userId, String proId,  HttpSession session, HttpServletRequest request){
+        AdminResultVo resultVo = new AdminResultVo();
+        DeleteResult res;
+
+        /*// 验证当前登录的管理员的权限
+        BaseUser loginAdminUser = (BaseUser)session.getAttribute("loginAdminUser");
+        if (loginAdminUser == null) {
+            resultVo.setCode(LoginResult.USER_NOT_LOGIN.getValue());
+            resultVo.setMsg(LoginResult.USER_NOT_LOGIN.getMsg());
+            return resultVo;
+        }
+        Role loginAdminUserRole = (Role)session.getAttribute("role");
+        if (Integer.parseInt(loginAdminUserRole.getRoleId()) > Integer.parseInt(UserPermision.ALL.getValue())) {
+            resultVo.setCode(AddResult.NOT_PERMISSION.getValue());
+            resultVo.setMsg(AddResult.NOT_PERMISSION.getMsg());
+            return resultVo;
+        }
+        // end 验证当前登录的管理员的权限*/
+
+        res = userService.deleteProject(userId, proId);
+        resultVo.setCode(res.getValue());
+        resultVo.setMsg(res.getMsg());
         return resultVo;
     }
 }
