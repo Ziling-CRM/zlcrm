@@ -2,6 +2,7 @@ package net.ziling.crm.dao;
 
 import net.ziling.crm.entity.UserProject;
 import net.ziling.crm.entity.UserProjectKey;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -68,4 +69,13 @@ public interface UserProjectMapper {
      * @return
      */
     List<String> selectProIdByUserId(String userId);
+
+
+    /**
+     *
+     * @param userId
+     * @param proId
+     * @return
+     */
+    UserProject selectByProIdAndUserId(@Param("userId") String userId, @Param("proId") String proId);
 }

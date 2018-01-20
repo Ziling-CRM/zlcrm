@@ -1,6 +1,7 @@
 package net.ziling.crm.service.impl;
 
 import net.ziling.crm.common.util.UUIDTools;
+import net.ziling.crm.common.wrap.DeleteResult;
 import net.ziling.crm.common.wrap.GetUserResult;
 import net.ziling.crm.common.wrap.UpdateUserResult;
 import net.ziling.crm.common.wrap.UserStatus;
@@ -338,5 +339,30 @@ public class UserServiceImpl implements UserService {
     @Override
     public BaseUser judgeUserExist(String userId) {
         return baseUserMapper.selectByUserId(userId);
+    }
+
+    @Override
+    public DeleteResult deleteProject(String userId, String proId){
+        if(userId == null || proId == null) {
+            return DeleteResult.LACK_OF_ID;
+        }
+        if(baseUserMapper.selectByUserId(userId) == null){
+            return DeleteResult.USER_NOT_EXIST;
+        }
+        UserProjectKey userProjectKey = new UserProjectKey();
+        userProjectKey.setProId(proId);
+        userProjectKey.setUserId(userId);
+        if(userProjectMapper.selectByProIdAndUserId(userId, proId) == null){
+            return DeleteResult.USER_PROJECT_NOT_EXIST;
+        }
+
+        if(projectMapper.selectByPrimaryKey(proId) == null){
+            return DeleteResult.ID_PROJECT_NOT_EXIST;
+        }
+
+        //删除userProject关联和project
+        userProjectMapper.deleteByPrimaryKey(userProjectKey);
+        projectMapper.deleteByPrimaryKey(proId);
+        return DeleteResult.SUCCESS;
     }
 }
