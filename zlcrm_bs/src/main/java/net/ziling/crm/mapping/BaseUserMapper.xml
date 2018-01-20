@@ -244,12 +244,13 @@
     where username = #{username,jdbcType=VARCHAR} AND status = "ON"
   </select>
 
-  <select id="getAllAdmin" parameterType="java.lang.String" resultMap="BaseResultMap">
+  <select id="getAllAdmin"  resultMap="BaseResultMap">
     select
     <!--<include refid="Base_Column_List" />-->
     u.*
     from base_user u, user_role r
     where u.user_id = r.user_id AND u.status = "ON" AND r.role_id != '*'
+    limit #{curPage},#{pageNum}
   </select>
 
   <update id="updateUserByUserIdSimple" parameterType="net.ziling.crm.entity.BaseUser">
@@ -265,7 +266,7 @@
     where user_id = #{userId, jdbcType=VARCHAR} and status = "ON"
   </update>
 
-  <select id="getAllUser" parameterType="java.lang.String" resultMap="GetAllSelectedUserMap">
+  <select id="getAllUser"  resultMap="GetAllSelectedUserMap">
       SELECT
       u.user_id,u.realname,d.post,d.capacity_rate,d.credit_rate
       FROM
@@ -286,9 +287,8 @@
       <if test="duty != null">
           AND d.post  LIKE CONCAT('%',#{duty, jdbcType=VARCHAR},'%')
       </if>
+      limit #{curPage},#{pageNum}
   </select>
-
-
 
   <!--
   wzy

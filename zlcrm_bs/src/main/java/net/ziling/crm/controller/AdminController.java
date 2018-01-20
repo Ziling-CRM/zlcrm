@@ -205,7 +205,7 @@ public class AdminController {
 
     @RequestMapping("/listAllAdmin")
     @ResponseBody
-    public AdminResultVo listAllAdmin(String username, HttpSession session, HttpServletRequest request) {
+    public AdminResultVo listAllAdmin(String username, int curPage, int pageNum, HttpSession session, HttpServletRequest request) {
         AdminResultVo resultVo = new AdminResultVo();
         BaseUser user = null;
 
@@ -218,6 +218,11 @@ public class AdminController {
 
         //获取username对应的管理员用户的信息
         user = userService.getUserByUsername(username);
+        if (user == null) {
+            resultVo.setMsg(LoginResult.USER_NOT_EXIST.getMsg()+"，找不到该管理员用户");
+            resultVo.setCode(LoginResult.USER_NOT_EXIST.getValue());
+            return resultVo;
+        }
 
         //获取当前登录的管理员的权限
         Role role = userService.getUserRole(user.getUserId());
@@ -230,7 +235,7 @@ public class AdminController {
         List<BaseUserWrap> adminListsWrap = new ArrayList<>();
         List<BaseUser> adminLists;
         //如果是超级管理员，获取所有的一般管理员信息
-        adminLists = userService.getAllAdmin();
+        adminLists = userService.getAllAdmin((curPage - 1)*pageNum, pageNum);
         BaseUserWrap baseUserWrap = new BaseUserWrap();
         Role adminRole;
         //获取每个管理员信息的权限

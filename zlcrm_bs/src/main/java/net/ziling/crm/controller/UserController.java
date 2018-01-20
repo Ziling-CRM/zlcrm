@@ -281,9 +281,20 @@ public class UserController {
         return resultVo;
     }
 
+    /**
+     * 显示所有的用户信息
+     * @param userId
+     * @param duty
+     * @param realname
+     * @param curPage  当前是第几页
+     * @param pageNum  每一页显示的元素的数量
+     * @param session
+     * @param request
+     * @return
+     */
     @RequestMapping("/listAllUser")
     @ResponseBody
-    public ResultVo listAllUser(String userId, String duty, String realname, HttpSession session, HttpServletRequest request) {
+    public ResultVo listAllUser(String userId, String duty, String realname, int curPage, int pageNum, HttpSession session, HttpServletRequest request) {
         ResultVo resultVo = new ResultVo();
         Map<String , Object> limits = new HashMap<>();
         Map<String , List<BaseUser>> resultDate = new HashMap<>();
@@ -310,7 +321,8 @@ public class UserController {
         limits.put("userId",userId);
         limits.put("duty",duty);
         limits.put("realname",realname);
-
+        limits.put("curPage",(curPage - 1)*pageNum);
+        limits.put("pageNum",pageNum);
 
         userList = userService.getAllSelectedUser(limits);
         resultVo.setCode(AddResult.SUCCESS.getValue());

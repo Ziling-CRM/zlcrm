@@ -1,6 +1,7 @@
 package net.ziling.crm.dao;
 
 import net.ziling.crm.entity.BaseUser;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -63,9 +64,11 @@ public interface BaseUserMapper {
 
     /**
      * 获取所有的管理员信息
+     * @param curPage  当前是第几页
+     * @param pageNum  每一页显示的数量
      * @return
      */
-    List<BaseUser> getAllAdmin();
+    List<BaseUser> getAllAdmin(@Param("curPage") int curPage, @Param("pageNum") int pageNum);
 
     /**
      * Simple版本修改用户信息

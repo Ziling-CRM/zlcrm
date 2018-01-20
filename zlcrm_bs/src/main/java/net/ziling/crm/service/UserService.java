@@ -32,9 +32,11 @@ public interface UserService {
 
     /**
      * 获取所有管理员信息
+     * @param pageNum 每页显示的数据的数量
+     * @param curPage 当前的页数
      * @return
      */
-    public List<BaseUser> getAllAdmin();
+    public List<BaseUser> getAllAdmin(int curPage, int pageNum);
 
     /**
      * 根据用户的用户名获取用户的信息

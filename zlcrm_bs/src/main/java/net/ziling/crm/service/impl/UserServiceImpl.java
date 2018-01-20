@@ -72,8 +72,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<BaseUser> getAllAdmin() {
-        return baseUserMapper.getAllAdmin();
+    public List<BaseUser> getAllAdmin(int curPage, int pageNum) {
+        return baseUserMapper.getAllAdmin(curPage, pageNum);
     }
 
     @Override
