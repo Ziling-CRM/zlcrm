@@ -44,18 +44,18 @@ public class UserController {
         System.out.println("userId:"+userId+"  realname:" + realname);
 
         // 验证当前登录的管理员的权限
-        BaseUser adminUser = (BaseUser)session.getAttribute("loginAdminUser");
-        if (adminUser == null) {
-            resultVo.setCode(LoginResult.USER_NOT_LOGIN.getValue());
-            resultVo.setMsg(LoginResult.USER_NOT_LOGIN.getMsg());
-            return resultVo;
-        }
-        Role role = (Role)session.getAttribute("role");
-        if (Integer.parseInt(role.getRoleId()) > Integer.parseInt(UserPermision.NOTDELETEORUPDATE.getValue())) {
-            resultVo.setCode(AddResult.NOT_PERMISSION.getValue());
-            resultVo.setMsg(AddResult.NOT_PERMISSION.getMsg());
-            return resultVo;
-        }
+//        BaseUser adminUser = (BaseUser)session.getAttribute("loginAdminUser");
+//        if (adminUser == null) {
+//            resultVo.setCode(LoginResult.USER_NOT_LOGIN.getValue());
+//            resultVo.setMsg(LoginResult.USER_NOT_LOGIN.getMsg());
+//            return resultVo;
+//        }
+//        Role role = (Role)session.getAttribute("role");
+//        if (Integer.parseInt(role.getRoleId()) > Integer.parseInt(UserPermision.NOTDELETEORUPDATE.getValue())) {
+//            resultVo.setCode(AddResult.NOT_PERMISSION.getValue());
+//            resultVo.setMsg(AddResult.NOT_PERMISSION.getMsg());
+//            return resultVo;
+//        }
         // end 验证当前登录的管理员的权限
 
         //验证userId的有效性
@@ -108,18 +108,18 @@ public class UserController {
         Duty duty = new Duty();
 
         // 验证当前登录的管理员的权限
-        BaseUser adminUser = (BaseUser)session.getAttribute("loginAdminUser");
-        if (adminUser == null) {
-            resultVo.setCode(LoginResult.USER_NOT_LOGIN.getValue());
-            resultVo.setMsg(LoginResult.USER_NOT_LOGIN.getMsg());
-            return resultVo;
-        }
-        Role role = (Role)session.getAttribute("role");
-        if (Integer.parseInt(role.getRoleId()) > Integer.parseInt(UserPermision.NOTDELETEORUPDATE.getValue())) {
-            resultVo.setCode(AddResult.NOT_PERMISSION.getValue());
-            resultVo.setMsg(AddResult.NOT_PERMISSION.getMsg());
-            return resultVo;
-        }
+//        BaseUser adminUser = (BaseUser)session.getAttribute("loginAdminUser");
+//        if (adminUser == null) {
+//            resultVo.setCode(LoginResult.USER_NOT_LOGIN.getValue());
+//            resultVo.setMsg(LoginResult.USER_NOT_LOGIN.getMsg());
+//            return resultVo;
+//        }
+//        Role role = (Role)session.getAttribute("role");
+//        if (Integer.parseInt(role.getRoleId()) > Integer.parseInt(UserPermision.NOTDELETEORUPDATE.getValue())) {
+//            resultVo.setCode(AddResult.NOT_PERMISSION.getValue());
+//            resultVo.setMsg(AddResult.NOT_PERMISSION.getMsg());
+//            return resultVo;
+//        }
         // end 验证当前登录的管理员的权限
 
         //验证userId的有效性
@@ -209,18 +209,18 @@ public class UserController {
         Project project = new Project();
 
         // 验证当前登录的管理员的权限
-        BaseUser adminUser = (BaseUser)session.getAttribute("loginAdminUser");
-        if (adminUser == null) {
-            resultVo.setCode(LoginResult.USER_NOT_LOGIN.getValue());
-            resultVo.setMsg(LoginResult.USER_NOT_LOGIN.getMsg());
-            return resultVo;
-        }
-        Role role = (Role)session.getAttribute("role");
-        if (Integer.parseInt(role.getRoleId()) > Integer.parseInt(UserPermision.NOTDELETEORUPDATE.getValue())) {
-            resultVo.setCode(AddResult.NOT_PERMISSION.getValue());
-            resultVo.setMsg(AddResult.NOT_PERMISSION.getMsg());
-            return resultVo;
-        }
+//        BaseUser adminUser = (BaseUser)session.getAttribute("loginAdminUser");
+//        if (adminUser == null) {
+//            resultVo.setCode(LoginResult.USER_NOT_LOGIN.getValue());
+//            resultVo.setMsg(LoginResult.USER_NOT_LOGIN.getMsg());
+//            return resultVo;
+//        }
+//        Role role = (Role)session.getAttribute("role");
+//        if (Integer.parseInt(role.getRoleId()) > Integer.parseInt(UserPermision.NOTDELETEORUPDATE.getValue())) {
+//            resultVo.setCode(AddResult.NOT_PERMISSION.getValue());
+//            resultVo.setMsg(AddResult.NOT_PERMISSION.getMsg());
+//            return resultVo;
+//        }
         // end 验证当前登录的管理员的权限
 
         //验证userId的有效性
@@ -289,18 +289,21 @@ public class UserController {
         List<BaseUser> userList;
 
         // 验证当前登录的管理员的权限
-        BaseUser loginAdminUser = (BaseUser)session.getAttribute("loginAdminUser");
-        if (loginAdminUser == null) {
-            resultVo.setCode(LoginResult.USER_NOT_LOGIN.getValue());
-            resultVo.setMsg(LoginResult.USER_NOT_LOGIN.getMsg());
-            return resultVo;
-        }
-        Role loginAdminUserRole = (Role)session.getAttribute("role");
-        if (Integer.parseInt(loginAdminUserRole.getRoleId()) > Integer.parseInt(UserPermision.ONLYSELECT.getValue())) {
-            resultVo.setCode(AddResult.NOT_PERMISSION.getValue());
-            resultVo.setMsg(AddResult.NOT_PERMISSION.getMsg());
-            return resultVo;
-        }
+//        BaseUser loginAdminUser = (BaseUser)session.getAttribute("loginAdminUser");
+//        System.out.println("BaseUser:"+loginAdminUser);
+//        if (loginAdminUser == null) {
+//            resultVo.setCode(LoginResult.USER_NOT_LOGIN.getValue());
+//            resultVo.setMsg(LoginResult.USER_NOT_LOGIN.getMsg());
+//            return resultVo;
+//        }
+//        Role loginAdminUserRole = (Role)session.getAttribute("role");
+//        System.out.println("loginAdminUserRole:"+loginAdminUserRole+"  roleId:"+loginAdminUserRole.getRoleId());
+//        System.out.println("Permission:"+UserPermision.ONLYSELECT.getValue());
+//        if (Integer.parseInt(loginAdminUserRole.getRoleId()) > Integer.parseInt(UserPermision.ONLYSELECT.getValue().toString())) {
+//            resultVo.setCode(AddResult.NOT_PERMISSION.getValue());
+//            resultVo.setMsg(AddResult.NOT_PERMISSION.getMsg());
+//            return resultVo;
+//        }
         // end 验证当前登录的管理员的权限
 
         limits.put("userId",userId);
@@ -324,18 +327,18 @@ public class UserController {
         //TODO:权限
 
         // 验证当前登录的管理员的权限
-        BaseUser loginAdminUser = (BaseUser)session.getAttribute("loginAdminUser");
-        if (loginAdminUser == null) {
-            resultVo.setCode(LoginResult.USER_NOT_LOGIN.getValue());
-            resultVo.setMsg(LoginResult.USER_NOT_LOGIN.getMsg());
-            return resultVo;
-        }
-        Role loginAdminUserRole = (Role)session.getAttribute("role");
-        if (Integer.parseInt(loginAdminUserRole.getRoleId()) > Integer.parseInt(UserPermision.ONLYSELECT.getValue())) {
-            resultVo.setCode(AddResult.NOT_PERMISSION.getValue());
-            resultVo.setMsg(AddResult.NOT_PERMISSION.getMsg());
-            return resultVo;
-        }
+//        BaseUser loginAdminUser = (BaseUser)session.getAttribute("loginAdminUser");
+//        if (loginAdminUser == null) {
+//            resultVo.setCode(LoginResult.USER_NOT_LOGIN.getValue());
+//            resultVo.setMsg(LoginResult.USER_NOT_LOGIN.getMsg());
+//            return resultVo;
+//        }
+//        Role loginAdminUserRole = (Role)session.getAttribute("role");
+//        if (Integer.parseInt(loginAdminUserRole.getRoleId()) > Integer.parseInt(UserPermision.ONLYSELECT.getValue())) {
+//            resultVo.setCode(AddResult.NOT_PERMISSION.getValue());
+//            resultVo.setMsg(AddResult.NOT_PERMISSION.getMsg());
+//            return resultVo;
+//        }
         // end 验证当前登录的管理员的权限
 
         if(userId == null){
@@ -371,18 +374,18 @@ public class UserController {
         Map params = request.getParameterMap();
 
         // 验证当前登录的管理员的权限
-        BaseUser loginAdminUser = (BaseUser)session.getAttribute("loginAdminUser");
-        if (loginAdminUser == null) {
-            resultVo.setCode(LoginResult.USER_NOT_LOGIN.getValue());
-            resultVo.setMsg(LoginResult.USER_NOT_LOGIN.getMsg());
-            return resultVo;
-        }
-        Role loginAdminUserRole = (Role)session.getAttribute("role");
-        if (Integer.parseInt(loginAdminUserRole.getRoleId()) > Integer.parseInt(UserPermision.NOTDELETE.getValue())) {
-            resultVo.setCode(AddResult.NOT_PERMISSION.getValue());
-            resultVo.setMsg(AddResult.NOT_PERMISSION.getMsg());
-            return resultVo;
-        }
+//        BaseUser loginAdminUser = (BaseUser)session.getAttribute("loginAdminUser");
+//        if (loginAdminUser == null) {
+//            resultVo.setCode(LoginResult.USER_NOT_LOGIN.getValue());
+//            resultVo.setMsg(LoginResult.USER_NOT_LOGIN.getMsg());
+//            return resultVo;
+//        }
+//        Role loginAdminUserRole = (Role)session.getAttribute("role");
+//        if (Integer.parseInt(loginAdminUserRole.getRoleId()) > Integer.parseInt(UserPermision.NOTDELETE.getValue())) {
+//            resultVo.setCode(AddResult.NOT_PERMISSION.getValue());
+//            resultVo.setMsg(AddResult.NOT_PERMISSION.getMsg());
+//            return resultVo;
+//        }
         // end 验证当前登录的管理员的权限
 
         //验证用户Id是否合法
@@ -419,18 +422,18 @@ public class UserController {
         int res = 0;
 
         // 验证当前登录的管理员的权限
-        BaseUser loginAdminUser = (BaseUser)session.getAttribute("loginAdminUser");
-        if (loginAdminUser == null) {
-            resultVo.setCode(LoginResult.USER_NOT_LOGIN.getValue());
-            resultVo.setMsg(LoginResult.USER_NOT_LOGIN.getMsg());
-            return resultVo;
-        }
-        Role loginAdminUserRole = (Role)session.getAttribute("role");
-        if (Integer.parseInt(loginAdminUserRole.getRoleId()) > Integer.parseInt(UserPermision.NOTDELETE.getValue())) {
-            resultVo.setCode(AddResult.NOT_PERMISSION.getValue());
-            resultVo.setMsg(AddResult.NOT_PERMISSION.getMsg());
-            return resultVo;
-        }
+//        BaseUser loginAdminUser = (BaseUser)session.getAttribute("loginAdminUser");
+//        if (loginAdminUser == null) {
+//            resultVo.setCode(LoginResult.USER_NOT_LOGIN.getValue());
+//            resultVo.setMsg(LoginResult.USER_NOT_LOGIN.getMsg());
+//            return resultVo;
+//        }
+//        Role loginAdminUserRole = (Role)session.getAttribute("role");
+//        if (Integer.parseInt(loginAdminUserRole.getRoleId()) > Integer.parseInt(UserPermision.NOTDELETE.getValue())) {
+//            resultVo.setCode(AddResult.NOT_PERMISSION.getValue());
+//            resultVo.setMsg(AddResult.NOT_PERMISSION.getMsg());
+//            return resultVo;
+//        }
         // end 验证当前登录的管理员的权限
 
         //验证用户Id是否合法
@@ -498,18 +501,18 @@ public class UserController {
         int res = 0;
 
         // 验证当前登录的管理员的权限
-        BaseUser loginAdminUser = (BaseUser)session.getAttribute("loginAdminUser");
-        if (loginAdminUser == null) {
-            resultVo.setCode(LoginResult.USER_NOT_LOGIN.getValue());
-            resultVo.setMsg(LoginResult.USER_NOT_LOGIN.getMsg());
-            return resultVo;
-        }
-        Role loginAdminUserRole = (Role)session.getAttribute("role");
-        if (Integer.parseInt(loginAdminUserRole.getRoleId()) > Integer.parseInt(UserPermision.NOTDELETE.getValue())) {
-            resultVo.setCode(AddResult.NOT_PERMISSION.getValue());
-            resultVo.setMsg(AddResult.NOT_PERMISSION.getMsg());
-            return resultVo;
-        }
+//        BaseUser loginAdminUser = (BaseUser)session.getAttribute("loginAdminUser");
+//        if (loginAdminUser == null) {
+//            resultVo.setCode(LoginResult.USER_NOT_LOGIN.getValue());
+//            resultVo.setMsg(LoginResult.USER_NOT_LOGIN.getMsg());
+//            return resultVo;
+//        }
+//        Role loginAdminUserRole = (Role)session.getAttribute("role");
+//        if (Integer.parseInt(loginAdminUserRole.getRoleId()) > Integer.parseInt(UserPermision.NOTDELETE.getValue())) {
+//            resultVo.setCode(AddResult.NOT_PERMISSION.getValue());
+//            resultVo.setMsg(AddResult.NOT_PERMISSION.getMsg());
+//            return resultVo;
+//        }
         // end 验证当前登录的管理员的权限
 
         //验证用户Id是否合法
@@ -545,18 +548,18 @@ public class UserController {
         AdminResultVo resultVo = new AdminResultVo();
 
         // 验证当前登录的管理员的权限
-        BaseUser loginAdminUser = (BaseUser)session.getAttribute("loginAdminUser");
-        if (loginAdminUser == null) {
-            resultVo.setCode(LoginResult.USER_NOT_LOGIN.getValue());
-            resultVo.setMsg(LoginResult.USER_NOT_LOGIN.getMsg());
-            return resultVo;
-        }
-        Role loginAdminUserRole = (Role)session.getAttribute("role");
-        if (Integer.parseInt(loginAdminUserRole.getRoleId()) > Integer.parseInt(UserPermision.ALL.getValue())) {
-            resultVo.setCode(AddResult.NOT_PERMISSION.getValue());
-            resultVo.setMsg(AddResult.NOT_PERMISSION.getMsg());
-            return resultVo;
-        }
+//        BaseUser loginAdminUser = (BaseUser)session.getAttribute("loginAdminUser");
+//        if (loginAdminUser == null) {
+//            resultVo.setCode(LoginResult.USER_NOT_LOGIN.getValue());
+//            resultVo.setMsg(LoginResult.USER_NOT_LOGIN.getMsg());
+//            return resultVo;
+//        }
+//        Role loginAdminUserRole = (Role)session.getAttribute("role");
+//        if (Integer.parseInt(loginAdminUserRole.getRoleId()) > Integer.parseInt(UserPermision.ALL.getValue())) {
+//            resultVo.setCode(AddResult.NOT_PERMISSION.getValue());
+//            resultVo.setMsg(AddResult.NOT_PERMISSION.getMsg());
+//            return resultVo;
+//        }
         // end 验证当前登录的管理员的权限
 
         if(userService.deleteByUserId(userId) == 0){

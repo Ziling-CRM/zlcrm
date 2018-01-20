@@ -9,7 +9,7 @@ package net.ziling.crm.common.wrap;
  */
 public enum UserPermision {
 
-    SADMIN("*","超级管理员"),
+    SADMIN("-1","超级管理员"),
     ALL("0", "所有权限"),
     NOTDELETE("1", "不能删除"),
     NOTDELETEORUPDATE("2", "不能删除或者修改"),
