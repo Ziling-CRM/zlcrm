@@ -249,8 +249,11 @@
     <!--<include refid="Base_Column_List" />-->
     u.*
     from base_user u, user_role r
-    where u.user_id = r.user_id AND u.status = "ON" AND r.role_id != '*'
-    limit #{curPage},#{pageNum}
+    where u.user_id = r.user_id AND u.status = "ON" AND r.role_id != '-1'
+    <if test="pageNum != 0">
+      limit #{curPage},#{pageNum}
+    </if>
+
   </select>
 
   <update id="updateUserByUserIdSimple" parameterType="net.ziling.crm.entity.BaseUser">
@@ -287,7 +290,10 @@
       <if test="duty != null">
           AND d.post  LIKE CONCAT('%',#{duty, jdbcType=VARCHAR},'%')
       </if>
+    <if test="pageNum != null">
       limit #{curPage},#{pageNum}
+    </if>
+
   </select>
 
   <!--

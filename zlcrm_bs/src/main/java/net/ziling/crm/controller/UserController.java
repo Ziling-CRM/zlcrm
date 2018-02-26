@@ -294,10 +294,10 @@ public class UserController {
      */
     @RequestMapping("/listAllUser")
     @ResponseBody
-    public ResultVo listAllUser(String userId, String duty, String realname, int curPage, int pageNum, HttpSession session, HttpServletRequest request) {
+    public ResultVo listAllUser(String userId, String duty, String realname, Integer curPage, Integer pageNum, HttpSession session, HttpServletRequest request) {
         ResultVo resultVo = new ResultVo();
         Map<String , Object> limits = new HashMap<>();
-        Map<String , List<BaseUser>> resultDate = new HashMap<>();
+        Map<String , Object> resultDate = new HashMap<>();
         List<BaseUser> userList;
 
         // 验证当前登录的管理员的权限
@@ -318,9 +318,19 @@ public class UserController {
 //        }
         // end 验证当前登录的管理员的权限
 
+        if (curPage == null || curPage == 0) {
+            curPage = 1;
+        }
+
+        if (pageNum == null || pageNum <= 0) {
+            pageNum = 100;
+        }
+
         limits.put("userId",userId);
         limits.put("duty",duty);
         limits.put("realname",realname);
+        int totalPages = userService.getAllSelectedUser(limits).size() / pageNum + 1;
+
         limits.put("curPage",(curPage - 1)*pageNum);
         limits.put("pageNum",pageNum);
 
@@ -328,6 +338,8 @@ public class UserController {
         resultVo.setCode(AddResult.SUCCESS.getValue());
         resultVo.setMsg(AddResult.SUCCESS.getMsg());
         resultDate.put("userList", userList);
+        resultDate.put("totalPageNum",totalPages);
+
         resultVo.setData(resultDate);
 
         return resultVo;

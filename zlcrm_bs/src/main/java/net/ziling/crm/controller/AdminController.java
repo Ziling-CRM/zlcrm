@@ -11,6 +11,7 @@ import net.ziling.crm.entity.BaseUser;
 import net.ziling.crm.entity.Role;
 import net.ziling.crm.entity.wrap.BaseUserWrap;
 import net.ziling.crm.service.UserService;
+import org.omg.CORBA.INTERNAL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -205,7 +206,7 @@ public class AdminController {
 
     @RequestMapping("/listAllAdmin")
     @ResponseBody
-    public AdminResultVo listAllAdmin(String username, int curPage, int pageNum, HttpSession session, HttpServletRequest request) {
+    public AdminResultVo listAllAdmin(String username, Integer curPage, Integer pageNum, HttpSession session, HttpServletRequest request) {
         AdminResultVo resultVo = new AdminResultVo();
         BaseUser user = null;
 
@@ -232,9 +233,18 @@ public class AdminController {
             return resultVo;
         }
 
+        if (curPage == null || curPage == 0) {
+            curPage = 1;
+        }
+
+        if (pageNum == null || pageNum <= 0) {
+            pageNum = 100;
+        }
+
         List<BaseUserWrap> adminListsWrap = new ArrayList<>();
         List<BaseUser> adminLists;
         //如果是超级管理员，获取所有的一般管理员信息
+        int totalPages = userService.getAllAdmin(0,0).size() / pageNum + 1;
         adminLists = userService.getAllAdmin((curPage - 1)*pageNum, pageNum);
         BaseUserWrap baseUserWrap = new BaseUserWrap();
         Role adminRole;
@@ -260,6 +270,7 @@ public class AdminController {
         }
 
         resultVo.setAdminDatas("adminLists", adminListsWrap);
+        resultVo.setAdminDatas("totalPageNum", totalPages);
         resultVo.setCode(AddResult.SUCCESS.getValue());
         resultVo.setMsg(AddResult.SUCCESS.getMsg());
 
